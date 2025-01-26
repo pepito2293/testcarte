@@ -209,51 +209,57 @@ footer {
 footer p {
   margin: 10px 0;
 }
-/* Styles du menu hamburger */
+/* Styles pour le menu hamburger */
 .hamburger-menu {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 20px; /* Distance depuis le haut */
+  right: 20px; /* Distance depuis la droite */
 }
 
+/* Cacher la case à cocher (contrôle du menu) */
 #menu-toggle {
   display: none;
 }
 
+/* Icône du menu hamburger */
 .menu-icon {
-  font-size: 2rem;
+  font-size: 2rem; /* Taille de l'icône */
   cursor: pointer;
   display: block;
+  user-select: none; /* Empêche la sélection de l'icône */
 }
 
+/* Liste des éléments du menu */
 .menu-items {
-  display: none;
-  list-style: none;
+  display: none; /* Masque le menu par défaut */
+  list-style: none; /* Supprime les puces */
   margin: 0;
   padding: 0;
-  background-color: #ffd700;
+  background-color: #ffd700; /* Couleur dorée */
   position: absolute;
-  top: 50px;
-  left: 20px;
-  width: 200px;
+  top: 40px; /* Positionne le menu sous l'icône */
+  right: 0; /* Aligne le menu avec le côté droit de l'écran */
+  width: 200px; /* Largeur du menu */
   border-radius: 5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Ajoute une ombre */
+  z-index: 1000; /* Assure que le menu est toujours au-dessus du contenu */
 }
 
 .menu-items li {
-  padding: 10px 20px;
+  padding: 10px 20px; /* Espacement interne des liens */
 }
 
 .menu-items li a {
-  text-decoration: none;
-  color: #000;
-  display: block;
+  text-decoration: none; /* Supprime le soulignement des liens */
+  color: #000; /* Texte noir */
+  display: block; /* Transforme les liens en blocs cliquables */
 }
 
 .menu-items li:hover {
-  background-color: #e6c200;
+  background-color: #e6c200; /* Change la couleur au survol */
 }
 
+/* Affiche le menu lorsque la case est cochée */
 #menu-toggle:checked + .menu-icon + .menu-items {
-  display: block;
+  display: block; /* Rend le menu visible */
 }
