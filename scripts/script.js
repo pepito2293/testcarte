@@ -224,6 +224,9 @@ function applyCustomizations() {
     if (input.value) {
       emojiList[index] = input.value;
     }
+populateEmojiTable(); // Met à jour le tableau
+generateCards(); // Regénère les cartes avec les personnalisations appliquées
+
   });
 
   fileInputs.forEach(input => {
@@ -252,9 +255,10 @@ function resetEmoji(index) {
 
 // Initialisation au chargement de la page
 document.addEventListener("DOMContentLoaded", () => {
-  populateEmojiTable();
-  updatePreview();
+  populateEmojiTable(); // Affiche le tableau des émojis
+  generateCards(); // Génère les cartes initiales
 });
+
 
 function enableDrag(symbol) {
   let isDragging = false;
