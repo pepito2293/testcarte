@@ -278,3 +278,105 @@ document.getElementById("emojiUpload").addEventListener("change", (event) => {
   }
 });
 
+// Initialisation de la liste des émojis
+const emojiList = [
+  "🍓", "🍕", "🍔", "🌵", "🐱", "🐟", "🎸", "🎨", "📱", "🚗",
+  "🍦", "🥑", "🦄", "🌙", "🔥", "🎶", "💻", "🐻", "🍩", "🏀",
+  "🌈", "🍿", "🥂", "🍹", "🎁", "🏞️", "🚀", "🎧", "👑", "⚽",
+  "📚", "🎂", "🍪", "🌻", "🎀", "🐶", "🍇", "🌎", "🍉", "🎤",
+  "🎯", "🍋", "🎹", "🐾", "🪐", "🛴", "🦋", "🍫", "🐨", "🍒",
+  "🌴", "🚲", "🎮", "⚡", "⭐", "🌟", "☕"
+];
+
+// Fonction pour afficher le tableau des émojis
+function populateEmojiTable() {
+  const tableBody = document.getElementById("emojiTable").querySelector("tbody");
+  tableBody.innerHTML = ""; // Vide le tableau avant de le remplir
+
+  emojiList.forEach((emoji, index) => {
+    const row = document.createElement("tr");
+
+    // Colonne numéro
+    const numberCell = document.createElement("td");
+    numberCell.textContent = index + 1;
+    row.appendChild(numberCell);
+
+    // Colonne émoji actuel
+    const emojiCell = document.createElement("td");
+    emojiCell.textContent = emoji;
+    row.appendChild(emojiCell);
+
+    // Colonne pour personnalisation
+    const inputCell = document.createElement("td");
+    const textInput = document.createElement("input");
+    textInput.type = "text";
+    textInput.placeholder = "Nouveau texte";
+    textInput.dataset.index = index; // Pour lier au bon émoji
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.dataset.index = index; // Pour lier au bon émoji
+
+    inputCell.appendChild(textInput);
+    inputCell.appendChild(fileInput);
+    row.appendChild(inputCell);
+
+    // Colonne action
+    const actionCell = document.createElement("td");
+    const resetButton = document.createElement("button");
+    resetButton.textContent = "Réinitialiser";
+    resetButton.onclick = () => resetEmoji(index);
+    actionCell.appendChild(resetButton);
+    row.appendChild(actionCell);
+
+    tableBody.appendChild(row);
+  });
+}
+
+// Fonction pour appliquer les personnalisations
+function applyCustomizations() {
+  const textInputs = document.querySelectorAll("input[type='text']");
+  const fileInputs = document.querySelectorAll("input[type='file']");
+
+  textInputs.forEach(input => {
+    const index = input.dataset.index;
+    if (input.value) {
+      emojiList[index] = input.value; // Remplace l'émoji par le texte
+    }
+  });
+
+  fileInputs.forEach(input => {
+    const index = input.dataset.index;
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        emojiList[index] = e.target.result; // Remplace l'émoji par l'image
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  alert("Personnalisations appliquées !");
+  populateEmojiTable(); // Rafraîchit le tableau pour refléter les changements
+}
+
+// Fonction pour réinitialiser un émoji à sa valeur par défaut
+function resetEmoji(index) {
+  const defaultEmojis = [
+    "🍓", "🍕", "🍔", "🌵", "🐱", "🐟", "🎸", "🎨", "📱", "🚗",
+    "🍦", "🥑", "🦄", "🌙", "🔥", "🎶", "💻", "🐻", "🍩", "🏀",
+    "🌈", "🍿", "🥂", "🍹", "🎁", "🏞️", "🚀", "🎧", "👑", "⚽",
+    "📚", "🎂", "🍪", "🌻", "🎀", "🐶", "🍇", "🌎", "🍉", "🎤",
+    "🎯", "🍋", "🎹", "🐾", "🪐", "🛴", "🦋", "🍫", "🐨", "🍒",
+    "🌴", "🚲", "🎮", "⚡", "⭐", "🌟", "☕"
+  ];
+  emojiList[index] = defaultEmojis[index];
+  alert(`Émoji #${index + 1} réinitialisé !`);
+  populateEmojiTable();
+}
+
+// Initialisation
+document.addEventListener("DOMContentLoaded", populateEmojiTable);
+
+
