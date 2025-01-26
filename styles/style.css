@@ -209,3 +209,51 @@ footer {
 footer p {
   margin: 10px 0;
 }
+/* Styles du menu hamburger */
+.hamburger-menu {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+#menu-toggle {
+  display: none;
+}
+
+.menu-icon {
+  font-size: 2rem;
+  cursor: pointer;
+  display: block;
+}
+
+.menu-items {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background-color: #ffd700;
+  position: absolute;
+  top: 50px;
+  left: 20px;
+  width: 200px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.menu-items li {
+  padding: 10px 20px;
+}
+
+.menu-items li a {
+  text-decoration: none;
+  color: #000;
+  display: block;
+}
+
+.menu-items li:hover {
+  background-color: #e6c200;
+}
+
+#menu-toggle:checked + .menu-icon + .menu-items {
+  display: block;
+}
