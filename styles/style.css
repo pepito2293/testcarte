@@ -135,25 +135,49 @@ input[type="range"] {
   color: #000;
 }
 
-.size-control input {
-  width: 150px;
+.emoji-customization {
+  margin-top: 30px;
+  text-align: center;
 }
 
-.upload-container {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
+.emoji-customization table {
+  margin: 0 auto;
+  border-collapse: collapse;
+  width: 80%;
 }
 
-.upload-container label {
-  font-size: 1rem;
+.emoji-customization table th, .emoji-customization table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+
+
+
+
+
+.emoji-customization table th {
+  background-color: #ffd700;
   color: #000;
 }
 
-.upload-container input {
-  padding: 5px;
-  font-size: 1rem;
+.emoji-customization input[type="text"],
+.emoji-customization input[type="file"] {
+  width: 80%;
 }
 
+.emoji-customization button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #ffd700;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.emoji-customization button:hover {
+  background-color: #e6c200;
+}
