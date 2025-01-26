@@ -427,3 +427,92 @@ function updateExistingCards() {
   });
 }
 
+// Liste des émojis par défaut
+const emojiList = [
+  "🍓", "🍕", "🍔", "🌵", "🐱", "🐟", "🎸", "🎨", "📱", "🚗",
+  "🍦", "🥑", "🦄", "🌙", "🔥", "🎶", "💻", "🐻", "🍩", "🏀",
+  "🌈", "🍿", "🥂", "🍹", "🎁", "🏞️", "🚀", "🎧", "👑", "⚽",
+  "📚", "🎂", "🍪", "🌻", "🎀", "🐶", "🍇", "🌎", "🍉", "🎤",
+  "🎯", "🍋", "🎹", "🐾", "🪐", "🛴", "🦋", "🍫", "🐨", "🍒",
+  "🌴", "🚲", "🎮", "⚡", "⭐", "🌟", "☕"
+];
+
+// Remplit le tableau de personnalisation
+function populateEmojiTable() {
+  const tableBody = document.getElementById("emojiTable").querySelector("tbody");
+  tableBody.innerHTML = ""; // Vide le tableau avant de le remplir
+
+  emojiList.forEach((emoji, index) => {
+    const row = document.createElement("tr");
+
+    // Colonne numéro
+    const numberCell = document.createElement("td");
+    numberCell.textContent = index + 1;
+    row.appendChild(numberCell);
+
+    // Colonne émoji actuel
+    const emojiCell = document.createElement("td");
+    emojiCell.textContent = emoji;
+    emojiCell.id = `current-emoji-${index}`;
+    row.appendChild(emojiCell);
+
+    // Colonne pour personnalisation
+    const inputCell = document.createElement("td");
+    const textInput = document.createElement("input");
+    textInput.type = "text";
+    textInput.placeholder = "Nouveau texte";
+    textInput.dataset.index = index;
+
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.dataset.index = index;
+
+    fileInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          emojiList[index] = e.target.result; // Met à jour l'émoji
+          document.getElementById(`current-emoji-${index}`).innerHTML = `<img src="${e.target.result}" width="20" height="20">`;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    textInput.addEventListener("input", (event) => {
+      const value = event.target.value;
+      emojiList[index] = value || emojiList[index]; // Met à jour avec le texte
+      document.getElementById(`current-emoji-${index}`).textContent = value || emojiList[index];
+    });
+
+    inputCell.appendChild(textInput);
+    inputCell.appendChild(fileInput);
+    row.appendChild(inputCell);
+
+    // Colonne action
+    const actionCell = document.createElement("td");
+    const resetButton = document.createElement("button");
+    resetButton.textContent = "Réinitialiser";
+    resetButton.onclick = () => resetEmoji(index);
+    actionCell.appendChild(resetButton);
+    row.appendChild(actionCell);
+
+    tableBody.appendChild(row);
+  });
+}
+
+// Fonction pour réinitialiser un émoji
+function resetEmoji(index) {
+  emojiList[index] = emojiList[index];
+  const currentEmoji = document.getElementById(`current-emoji-${index}`);
+  currentEmoji.textContent = emojiList[index];
+}
+
+// Fonction d'initialisation
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.getElementById("emojiTable")) {
+    populateEmojiTable(); // Affiche le tableau si la page contient le tableau
+  }
+});
+
