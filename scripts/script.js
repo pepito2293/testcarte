@@ -173,36 +173,72 @@ async function downloadCardsAsPDF() {
   pdf.save("dobble_cards.pdf");
 }
 
-// Fonction pour afficher le tableau des émojis personnalisables
 function populateEmojiTable() {
   const tableBody = document.getElementById("emojiTable").querySelector("tbody");
-  tableBody.innerHTML = "";
+  tableBody.innerHTML = ""; // Vide la table avant de la remplir
 
   emojiList.forEach((emoji, index) => {
     const row = document.createElement("tr");
 
+    // Colonne numéro
     const numberCell = document.createElement("td");
     numberCell.textContent = index + 1;
     row.appendChild(numberCell);
 
+    // Colonne émoji actuel (ancien + nouveau)
     const emojiCell = document.createElement("td");
-    emojiCell.textContent = emoji;
+    const oldEmojiSpan = document.createElement("span"); // Émoji actuel
+    oldEmojiSpan.textContent = emoji;
+    oldEmojiSpan.style.marginRight = "10px";
+
+    const newEmojiSpan = document.createElement("span"); // Place pour le nouvel émoji
+    newEmojiSpan.id = `new-emoji-${index}`; // ID unique pour le nouvel émoji
+    emojiCell.appendChild(oldEmojiSpan);
+    emojiCell.appendChild(newEmojiSpan);
     row.appendChild(emojiCell);
 
+    // Colonne pour personnalisation
     const inputCell = document.createElement("td");
     const textInput = document.createElement("input");
     textInput.type = "text";
     textInput.placeholder = "Nouveau texte";
     textInput.dataset.index = index;
+
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.accept = "image/*";
     fileInput.dataset.index = index;
 
+    // Gère l'aperçu immédiat des personnalisations
+    textInput.addEventListener("input", (event) => {
+      const index = event.target.dataset.index;
+      document.getElementById(`new-emoji-${index}`).textContent = event.target.value || "";
+    });
+
+    fileInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      const index = event.target.dataset.index;
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const newEmoji = document.createElement("img");
+          newEmoji.src = e.target.result;
+          newEmoji.style.width = "20px";
+          newEmoji.style.height = "20px";
+
+          const newEmojiSpan = document.getElementById(`new-emoji-${index}`);
+          newEmojiSpan.innerHTML = ""; // Efface l'ancien contenu
+          newEmojiSpan.appendChild(newEmoji);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
     inputCell.appendChild(textInput);
     inputCell.appendChild(fileInput);
     row.appendChild(inputCell);
 
+    // Colonne action (réinitialisation)
     const actionCell = document.createElement("td");
     const resetButton = document.createElement("button");
     resetButton.textContent = "Réinitialiser";
@@ -214,6 +250,7 @@ function populateEmojiTable() {
   });
 }
 
+
 // Fonction pour appliquer les personnalisations
 function applyCustomizations() {
   const textInputs = document.querySelectorAll("input[type='text']");
@@ -222,8 +259,27 @@ function applyCustomizations() {
   textInputs.forEach(input => {
     const index = input.dataset.index;
     if (input.value) {
-      emojiList[index] = input.value;
+      emojiList[index] = input.value; // Met à jour l'émoji dans la liste
     }
+  });
+
+  fileInputs.forEach(input => {
+    const index = input.dataset.index;
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        emojiList[index] = e.target.result; // Met à jour l'émoji avec l'image chargée
+        updateExistingCards(); // Met à jour les cartes existantes
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  updateExistingCards(); // Met à jour les cartes existantes immédiatement
+  alert("Personnalisations appliquées !");
+}
+
 populateEmojiTable(); // Met à jour le tableau
 generateCards(); // Regénère les cartes avec les personnalisations appliquées
 
@@ -345,4 +401,29 @@ document.addEventListener("DOMContentLoaded", () => {
     populateEmojiTable(); // Charge la table si elle est présente dans la page
   }
 });
+
+function updateExistingCards() {
+  const cards = document.querySelectorAll(".card");
+  cards.forEach((card, cardIndex) => {
+    const symbols = card.querySelectorAll(".symbol");
+
+    symbols.forEach((symbol, symbolIndex) => {
+      const emoji = emojiList[(cardIndex + symbolIndex) % emojiList.length];
+
+      if (emoji.startsWith("data:image")) {
+        // Si l'émoji est une image, insère une balise <img>
+        const img = document.createElement("img");
+        img.src = emoji;
+        img.style.width = "100%";
+        img.style.height = "100%";
+
+        symbol.innerHTML = ""; // Vide le contenu précédent
+        symbol.appendChild(img);
+      } else {
+        // Sinon, insère le texte de l'émoji
+        symbol.textContent = emoji;
+      }
+    });
+  });
+}
 
