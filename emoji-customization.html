@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personnalisation des émojis</title>
+  <link rel="stylesheet" href="styles/style.css">
+  <script src="scripts/script.js" defer></script>
+</head>
+<body>
+  <!-- Menu hamburger -->
+  <nav class="hamburger-menu">
+    <input type="checkbox" id="menu-toggle">
+    <label for="menu-toggle" class="menu-icon">
+      ☰
+    </label>
+    <ul class="menu-items">
+      <li><a href="index.html">Accueil</a></li>
+      <li><a href="emoji-customization.html">Personnaliser les émojis</a></li>
+    </ul>
+  </nav>
+
+  <!-- Contenu principal -->
+  <main>
+    <h2>Personnalisez vos émojis</h2>
+    <table id="emojiTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Émoji actuel</th>
+          <th>Nouveau texte ou image</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Le contenu du tableau est généré dynamiquement par JavaScript -->
+      </tbody>
+    </table>
+    <button onclick="applyCustomizations()">Appliquer les personnalisations</button>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Créations Dupdup</p>
+  </footer>
+</body>
+</html>
