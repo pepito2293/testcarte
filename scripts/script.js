@@ -171,11 +171,38 @@ function resetEmoji(index) {
   currentEmoji.textContent = emojiList[index];
 }
 
-// Fonction pour appliquer les personnalisations
 function applyCustomizations() {
-  alert("Personnalisations appliquées !");
+  const textInputs = document.querySelectorAll("input[type='text']");
+  const fileInputs = document.querySelectorAll("input[type='file']");
+
+  // Mise à jour de la liste emojiList avec les nouvelles valeurs
+  textInputs.forEach(input => {
+    const index = input.dataset.index;
+    if (input.value) {
+      emojiList[index] = input.value; // Remplace par le texte saisi
+    }
+  });
+
+  fileInputs.forEach(input => {
+    const index = input.dataset.index;
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        emojiList[index] = e.target.result; // Met à jour avec l'image
+        document.getElementById(`current-emoji-${index}`).innerHTML = `<img src="${e.target.result}" width="20" height="20">`;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Réaffiche le tableau mis à jour
   populateEmojiTable();
+
+  // Affiche un message de confirmation
+  alert("Personnalisations appliquées !");
 }
+
 
 // Initialisation
 document.addEventListener("DOMContentLoaded", () => {
