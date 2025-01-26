@@ -47,19 +47,53 @@ function positionSymbols(cardDiv, card) {
   const positions = [];
 
   card.forEach((symbol) => {
-    let isValidPosition = false;
-    let x, y, size;
+  let isValidPosition = false;
+  let x, y, size;
 
-    while (!isValidPosition) {
-      size = Math.random() * (maxSize - minSize) + minSize;
-      x = margin + Math.random() * (cardSize - 2 * margin - size);
-      y = margin + Math.random() * (cardSize - 2 * margin - size);
+  while (!isValidPosition) {
+    size = Math.random() * (maxSize - minSize) + minSize;
+    x = margin + Math.random() * (cardSize - 2 * margin - size);
+    y = margin + Math.random() * (cardSize - 2 * margin - size);
 
-      isValidPosition = positions.every(pos => {
-        const distance = Math.sqrt(Math.pow(pos.x - x, 2) + Math.pow(pos.y - y, 2));
-        return distance > (pos.size + size) / 2 + 10;
-      });
-    }
+    isValidPosition = positions.every(pos => {
+      const distance = Math.sqrt(Math.pow(pos.x - x, 2) + Math.pow(pos.y - y, 2));
+      return distance > (pos.size + size) / 2 + 10;
+    });
+  }
+
+  positions.push({ x, y, size });
+
+  const rotation = Math.random() * 360;
+
+  // Crée un élément pour afficher le symbole (texte ou image)
+  const symbolDiv = document.createElement("div");
+  symbolDiv.className = "symbol";
+
+  // Vérifie si le symbole est une URL d'image ou un émoji
+  if (symbol.startsWith("data:image")) {
+    const img = document.createElement("img");
+    img.src = symbol;
+    img.style.width = `${size}px`;
+    img.style.height = `${size}px`;
+    symbolDiv.appendChild(img);
+  } else {
+    symbolDiv.textContent = symbol;
+    symbolDiv.style.fontSize = `${size}px`;
+  }
+
+  Object.assign(symbolDiv.style, {
+    left: `${x}px`,
+    top: `${y}px`,
+    width: `${size}px`,
+    height: `${size}px`,
+    transform: `rotate(${rotation}deg)`
+  });
+
+  symbolDiv.addEventListener("click", () => selectSymbol(symbolDiv));
+  enableDrag(symbolDiv);
+  cardDiv.appendChild(symbolDiv);
+});
+
 
     positions.push({ x, y, size });
 
@@ -221,3 +255,26 @@ function updatePreview() {
 }
 
 document.addEventListener("DOMContentLoaded", updatePreview);
+
+// Gérer les fichiers d'émojis personnalisés
+document.getElementById("emojiUpload").addEventListener("change", (event) => {
+  const files = event.target.files;
+
+  // Vérifie si des fichiers ont été sélectionnés
+  if (files.length > 0) {
+    for (let file of files) {
+      const reader = new FileReader();
+
+      // Charge chaque fichier sélectionné
+      reader.onload = (e) => {
+        const imageURL = e.target.result; // URL temporaire de l'image
+        emojiList.push(imageURL); // Ajoute l'image à la liste des émojis
+      };
+
+      reader.readAsDataURL(file); // Lit le fichier comme une URL Data
+    }
+
+    alert("Vos émojis personnalisés ont été ajoutés !");
+  }
+});
+
