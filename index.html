@@ -5,10 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Créations Dupdup - Générateur de cartes Dobble</title>
   <link rel="stylesheet" href="styles/style.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script src="scripts/script.js" defer></script>
 </head>
 <body>
+  <!-- Menu hamburger -->
+  <nav class="hamburger-menu">
+    <input type="checkbox" id="menu-toggle">
+    <label for="menu-toggle" class="menu-icon">
+      ☰
+    </label>
+    <ul class="menu-items">
+      <li><a href="index.html">Accueil</a></li>
+      <li><a href="emoji-customization.html">Personnaliser les émojis</a></li>
+    </ul>
+  </nav>
+
+  <!-- Contenu principal -->
   <header>
     <img src="isla_200x200.74417624_o08o07y0.jpg" alt="Logo Créations Dupdup" class="logo">
     <h1>Créations Dupdup</h1>
@@ -34,38 +46,13 @@
       <input type="range" id="maxSize" min="40" max="120" value="70" oninput="updatePreview()">
     </div>
 
-    <div class="emoji-customization">
-      <h2>Personnalisez vos émojis</h2>
-      <table id="emojiTable">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Émoji actuel</th>
-            <th>Nouveau texte ou image</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Le contenu du tableau est généré dynamiquement par JavaScript -->
-        </tbody>
-      </table>
-      <button onclick="applyCustomizations()">Appliquer les personnalisations</button>
-    </div>
-
     <div class="card-container-wrapper">
       <div class="card-container" id="cardContainer"></div>
     </div>
   </main>
 
   <footer>
-    <div class="size-control" id="sizeControl">
-      <label for="emojiSize">Taille de l'émoji :</label>
-      <input type="range" id="emojiSize" min="10" max="120" value="50" oninput="adjustEmojiSize()">
-      <span id="emojiSizeValue">50 px</span>
-    </div>
     <p>&copy; 2025 Créations Dupdup</p>
   </footer>
-
-  <script src="scripts/script.js"></script>
 </body>
 </html>
