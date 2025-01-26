@@ -80,10 +80,11 @@ function positionSymbols(cardDiv, card) {
 
     const rotation = Math.random() * 360;
 
+    // Création de l'élément du symbole
     const symbolDiv = document.createElement("div");
     symbolDiv.className = "symbol";
 
-    // Vérifie si le symbole est une URL d'image ou un émoji
+    // Vérifie si le symbole est une URL d'image ou du texte
     if (symbol.startsWith("data:image")) {
       const img = document.createElement("img");
       img.src = symbol;
@@ -95,6 +96,7 @@ function positionSymbols(cardDiv, card) {
       symbolDiv.style.fontSize = `${size}px`;
     }
 
+    // Applique les styles
     Object.assign(symbolDiv.style, {
       left: `${x}px`,
       top: `${y}px`,
@@ -102,6 +104,10 @@ function positionSymbols(cardDiv, card) {
       height: `${size}px`,
       transform: `rotate(${rotation}deg)`
     });
+
+    // Ajoute les événements pour la sélection et le déplacement
+    symbolDiv.addEventListener("click", () => selectSymbol(symbolDiv));
+    enableDrag(symbolDiv);
 
     cardDiv.appendChild(symbolDiv);
   });
