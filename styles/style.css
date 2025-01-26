@@ -1,0 +1,140 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #add8e6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 2px 2px 0px #000000;
+  margin: 20px 0;
+}
+
+.logo {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 100px;
+  height: 100px;
+}
+
+.wave {
+  background-color: #ffd700;
+  height: 30px;
+  border-radius: 50% 50% 0 0;
+  transform: rotate(180deg);
+  margin: 0 auto 20px auto;
+}
+
+.card-container-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.actions {
+  margin-top: 20px;
+}
+
+.slider-container {
+  margin-bottom: 40px;
+}
+
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 25px;
+  justify-content: center;
+}
+
+.card {
+  width: 250px;
+  height: 250px;
+  border: 3px solid #000000;
+  position: relative;
+  background: linear-gradient(135deg, #ffffff, #f9f9f9);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.symbol {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  user-select: none;
+  transition: top 0.1s ease, left 0.1s ease;
+}
+
+.symbol:active {
+  cursor: grabbing;
+}
+
+button {
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #ffd700;
+  color: #000000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+input[type="range"] {
+  width: 300px;
+}
+
+.slider-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #000000;
+}
+
+.size-control {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.size-control label {
+  font-size: 1rem;
+  color: #000;
+}
+
+.size-control input {
+  width: 150px;
+}
