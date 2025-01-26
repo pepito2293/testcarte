@@ -340,3 +340,9 @@ function enableDrag(symbol) {
   });
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.getElementById("emojiTable")) {
+    populateEmojiTable(); // Charge la table si elle est présente dans la page
+  }
+});
+
