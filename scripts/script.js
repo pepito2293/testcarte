@@ -255,3 +255,84 @@ document.addEventListener("DOMContentLoaded", () => {
   populateEmojiTable();
   updatePreview();
 });
+
+function enableDrag(symbol) {
+  let isDragging = false;
+  let offsetX, offsetY;
+
+  symbol.addEventListener("mousedown", (event) => {
+    isDragging = true;
+    offsetX = event.clientX - symbol.offsetLeft;
+    offsetY = event.clientY - symbol.offsetTop;
+    symbol.style.cursor = "grabbing"; // Change le curseur pendant le déplacement
+  });
+
+  document.addEventListener("mousemove", (event) => {
+    if (isDragging) {
+      const cardRect = symbol.parentElement.getBoundingClientRect();
+      let newLeft = event.clientX - offsetX;
+      let newTop = event.clientY - offsetY;
+
+      // Empêche de dépasser les limites de la carte
+      if (newLeft < 0) newLeft = 0;
+      if (newTop < 0) newTop = 0;
+      if (newLeft + symbol.offsetWidth > cardRect.width) {
+        newLeft = cardRect.width - symbol.offsetWidth;
+      }
+      if (newTop + symbol.offsetHeight > cardRect.height) {
+        newTop = cardRect.height - symbol.offsetHeight;
+      }
+
+      symbol.style.left = `${newLeft}px`;
+      symbol.style.top = `${newTop}px`;
+    }
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (isDragging) {
+      isDragging = false;
+      symbol.style.cursor = "grab"; // Retour au curseur par défaut
+    }
+  });
+}
+
+function enableDrag(symbol) {
+  let isDragging = false;
+  let offsetX, offsetY;
+
+  symbol.addEventListener("mousedown", (event) => {
+    isDragging = true;
+    offsetX = event.clientX - symbol.offsetLeft;
+    offsetY = event.clientY - symbol.offsetTop;
+    symbol.style.cursor = "grabbing"; // Change le curseur pendant le déplacement
+  });
+
+  document.addEventListener("mousemove", (event) => {
+    if (isDragging) {
+      const cardRect = symbol.parentElement.getBoundingClientRect();
+      let newLeft = event.clientX - offsetX;
+      let newTop = event.clientY - offsetY;
+
+      // Empêche de dépasser les limites de la carte
+      if (newLeft < 0) newLeft = 0;
+      if (newTop < 0) newTop = 0;
+      if (newLeft + symbol.offsetWidth > cardRect.width) {
+        newLeft = cardRect.width - symbol.offsetWidth;
+      }
+      if (newTop + symbol.offsetHeight > cardRect.height) {
+        newTop = cardRect.height - symbol.offsetHeight;
+      }
+
+      symbol.style.left = `${newLeft}px`;
+      symbol.style.top = `${newTop}px`;
+    }
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (isDragging) {
+      isDragging = false;
+      symbol.style.cursor = "grab"; // Retour au curseur par défaut
+    }
+  });
+}
+
