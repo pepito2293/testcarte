@@ -138,3 +138,22 @@ input[type="range"] {
 .size-control input {
   width: 150px;
 }
+
+.upload-container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.upload-container label {
+  font-size: 1rem;
+  color: #000;
+}
+
+.upload-container input {
+  padding: 5px;
+  font-size: 1rem;
+}
+
