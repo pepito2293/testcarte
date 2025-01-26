@@ -1,121 +1,181 @@
+/* Styles globaux pour la page */
 body {
   font-family: 'Poppins', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #add8e6;
+  background-color: #add8e6; /* Fond bleu clair */
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  min-height: 100vh;
-  text-align: center;
+  min-height: 100vh; /* Prend toute la hauteur de la fenêtre */
 }
 
-h1 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #ffffff;
-  text-shadow: 2px 2px 0px #000000;
-  margin: 20px 0;
-}
-
+/* Style du logo */
 .logo {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 20px; /* Distance depuis le haut */
+  left: 20px; /* Distance depuis la gauche */
   width: 100px;
   height: 100px;
 }
 
+/* Style du titre principal */
+h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 2px 2px 0px #000000; /* Ombre pour le texte */
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Vague décorative sous le titre */
 .wave {
-  background-color: #ffd700;
+  background-color: #ffd700; /* Couleur dorée */
   height: 30px;
-  border-radius: 50% 50% 0 0;
-  transform: rotate(180deg);
-  margin: 0 auto 20px auto;
-}
-
-.card-container-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   width: 100%;
+  border-radius: 50% 50% 0 0; /* Forme arrondie */
+  transform: rotate(180deg); /* Inversion de la vague */
+  margin-bottom: 20px;
 }
 
+/* Section des boutons d'action */
 .actions {
   margin-top: 20px;
 }
 
-.slider-container {
-  margin-bottom: 40px;
-}
-
-.card-container {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 25px;
-  justify-content: center;
-}
-
-.card {
-  width: 250px;
-  height: 250px;
-  border: 3px solid #000000;
-  position: relative;
-  background: linear-gradient(135deg, #ffffff, #f9f9f9);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-}
-
-.symbol {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.8);
-  cursor: pointer;
-  user-select: none;
-  transition: top 0.1s ease, left 0.1s ease;
-}
-
-.symbol:active {
-  cursor: grabbing;
-}
-
-button {
+.actions button {
   padding: 15px 30px;
   font-size: 18px;
   font-weight: bold;
-  cursor: pointer;
   border: none;
   border-radius: 5px;
-  background-color: #ffd700;
-  color: #000000;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s, box-shadow 0.2s;
+  background-color: #ffd700; /* Couleur dorée */
+  color: #000000; /* Texte noir */
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Ombre */
+  transition: transform 0.2s, box-shadow 0.2s; /* Animation au survol */
 }
 
-button:hover {
-  transform: scale(1.05);
+.actions button:hover {
+  transform: scale(1.05); /* Agrandissement au survol */
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
 }
 
-input[type="range"] {
-  width: 300px;
+/* Curseurs pour ajuster les tailles */
+.slider-container {
+  margin: 20px 0;
 }
 
 .slider-label {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-  font-size: 1rem;
-  color: #000000;
+  gap: 10px; /* Espacement entre le texte et la valeur */
+  margin-bottom: 10px;
 }
 
+input[type="range"] {
+  width: 300px;
+}
+
+/* Table de personnalisation des émojis */
+.emoji-customization {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.emoji-customization table {
+  margin: 0 auto;
+  border-collapse: collapse;
+  width: 80%;
+}
+
+.emoji-customization table th, .emoji-customization table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.emoji-customization table th {
+  background-color: #ffd700;
+  color: #000;
+}
+
+.emoji-customization input[type="text"],
+.emoji-customization input[type="file"] {
+  width: 80%;
+  padding: 5px;
+  font-size: 1rem;
+}
+
+.emoji-customization button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #ffd700;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.emoji-customization button:hover {
+  background-color: #e6c200;
+}
+
+/* Grille des cartes */
+.card-container-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* Grille avec 5 colonnes */
+  gap: 25px; /* Espacement entre les cartes */
+  justify-content: center;
+}
+
+/* Style des cartes */
+.card {
+  width: 250px;
+  height: 250px;
+  border: 3px solid #000000;
+  background: linear-gradient(135deg, #ffffff, #f9f9f9); /* Dégradé blanc */
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Ombre */
+  position: relative;
+}
+
+/* Style des émojis ou images dans les cartes */
+.symbol {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  user-select: none; /* Désactive la sélection */
+  transition: transform 0.1s ease;
+}
+
+.symbol img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 50%; /* Forme circulaire */
+}
+
+.symbol:active {
+  cursor: grabbing; /* Curseur "saisie" lors du clic */
+}
+
+/* Contrôle de taille d'émoji */
 .size-control {
-  display: none;
+  display: none; /* Caché par défaut */
   position: fixed;
   bottom: 20px;
   left: 50%;
@@ -135,49 +195,17 @@ input[type="range"] {
   color: #000;
 }
 
-.emoji-customization {
-  margin-top: 30px;
-  text-align: center;
+.size-control input {
+  width: 150px;
 }
 
-.emoji-customization table {
-  margin: 0 auto;
-  border-collapse: collapse;
-  width: 80%;
-}
-
-.emoji-customization table th, .emoji-customization table td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: center;
-}
-
-
-
-
-
-
-.emoji-customization table th {
-  background-color: #ffd700;
-  color: #000;
-}
-
-.emoji-customization input[type="text"],
-.emoji-customization input[type="file"] {
-  width: 80%;
-}
-
-.emoji-customization button {
+/* Pied de page */
+footer {
   margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  background-color: #ffd700;
+  text-align: center;
   color: #000;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
-.emoji-customization button:hover {
-  background-color: #e6c200;
+footer p {
+  margin: 10px 0;
 }
