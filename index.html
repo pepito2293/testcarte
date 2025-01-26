@@ -38,11 +38,25 @@
     <span id="emojiSizeValue">50 px</span>
   </div>
 
-// Personnalisation
-<div class="upload-container">
-  <label for="emojiUpload">Ajouter vos propres fichiers d'émojis :</label>
-  <input type="file" id="emojiUpload" accept="image/*" multiple>
+  <!-- personnalasiton -->
+<div class="emoji-customization">
+  <h2>Personnalisez vos émojis</h2>
+  <table id="emojiTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Émoji actuel</th>
+        <th>Nouveau texte ou image</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Les lignes seront générées dynamiquement avec JavaScript -->
+    </tbody>
+  </table>
+  <button onclick="applyCustomizations()">Appliquer les personnalisations</button>
 </div>
+
 
   <script src="scripts/script.js"></script>
 </body>
