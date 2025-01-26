@@ -15,6 +15,23 @@ function generateDobbleCards() {
   const symbols = emojiList.slice(0, totalSymbols); // Sélection des émojis nécessaires
   const cards = [];
 
+  function selectSymbol(symbol) {
+  if (activeSymbol) {
+    activeSymbol.style.outline = "none"; // Retire la bordure de l'ancien symbole
+  }
+
+  activeSymbol = symbol;
+  activeSymbol.style.outline = "2px solid #ffd700"; // Ajoute une bordure au symbole sélectionné
+
+  const sizeControl = document.getElementById("sizeControl");
+  const sizeInput = document.getElementById("emojiSize");
+  const sizeValue = document.getElementById("emojiSizeValue");
+
+  sizeControl.style.display = "flex"; // Affiche le contrôle de taille
+  sizeInput.value = parseInt(activeSymbol.style.width, 10); // Initialise la taille
+  sizeValue.textContent = `${sizeInput.value} px`; // Affiche la taille actuelle
+}
+
   // Génération des cartes
   for (let i = 0; i <= n; i++) {
     const card = [symbols[0]];
