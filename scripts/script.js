@@ -12,9 +12,10 @@ const emojiList = [
 function generateDobbleCards() {
   const n = 7; // Nombre de symboles par carte - 1
   const totalSymbols = n * n + n + 1; // Nombre total de symboles nécessaires
-  const symbols = emojiList.slice(0, totalSymbols);
+  const symbols = emojiList.slice(0, totalSymbols); // Utilise les émojis mis à jour
   const cards = [];
 
+  // Génère les cartes avec la liste d'émojis actuelle
   for (let i = 0; i <= n; i++) {
     const card = [symbols[0]];
     for (let j = 0; j < n; j++) {
@@ -37,12 +38,13 @@ function generateDobbleCards() {
   return cards.slice(0, 55); // Limite à 55 cartes
 }
 
+
 // Fonction pour afficher les cartes dans la grille
 function generateCards() {
   const cardContainer = document.getElementById("cardContainer");
   cardContainer.innerHTML = ""; // Efface les anciennes cartes
 
-  const cards = generateDobbleCards(); // Génère les cartes
+  const cards = generateDobbleCards(); // Génère les cartes avec la liste d'émojis mise à jour
   cards.forEach((card) => {
     const cardDiv = document.createElement("div");
     cardDiv.className = "card";
@@ -50,6 +52,7 @@ function generateCards() {
     cardContainer.appendChild(cardDiv);
   });
 }
+
 
 // Fonction pour positionner les symboles sur une carte
 function positionSymbols(cardDiv, card) {
@@ -80,6 +83,7 @@ function positionSymbols(cardDiv, card) {
     const symbolDiv = document.createElement("div");
     symbolDiv.className = "symbol";
 
+    // Vérifie si le symbole est une image ou un texte
     if (symbol.startsWith("data:image")) {
       const img = document.createElement("img");
       img.src = symbol;
@@ -102,6 +106,7 @@ function positionSymbols(cardDiv, card) {
     cardDiv.appendChild(symbolDiv);
   });
 }
+
 
 // Fonction pour remplir le tableau des émojis personnalisables
 function populateEmojiTable() {
@@ -194,7 +199,7 @@ function applyCustomizations() {
   const textInputs = document.querySelectorAll("input[type='text']");
   const fileInputs = document.querySelectorAll("input[type='file']");
 
-  // Mise à jour de la liste emojiList avec les nouvelles valeurs
+  // Met à jour la liste emojiList avec les nouvelles valeurs
   textInputs.forEach(input => {
     const index = input.dataset.index;
     if (input.value) {
@@ -209,18 +214,18 @@ function applyCustomizations() {
       const reader = new FileReader();
       reader.onload = (e) => {
         emojiList[index] = e.target.result; // Met à jour avec l'image
-        document.getElementById(`current-emoji-${index}`).innerHTML = `<img src="${e.target.result}" width="20" height="20">`;
       };
       reader.readAsDataURL(file);
     }
   });
 
-  // Réaffiche le tableau mis à jour
-  populateEmojiTable();
+  // Regénère les cartes immédiatement avec les émojis mis à jour
+  generateCards();
 
   // Affiche un message de confirmation
   alert("Personnalisations appliquées !");
 }
+
 
 
 // Initialisation
