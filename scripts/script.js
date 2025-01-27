@@ -128,6 +128,11 @@ function enableDragAndResize(symbol) {
   let isDragging = false; // Indique si le symbole est en cours de déplacement
   let offsetX, offsetY;
 
+  // Empêche le comportement par défaut de drag & drop
+  symbol.addEventListener("dragstart", (event) => {
+    event.preventDefault();
+  });
+
   // Début du déplacement
   symbol.addEventListener("mousedown", (event) => {
     isDragging = true;
@@ -178,6 +183,7 @@ function enableDragAndResize(symbol) {
     }
   });
 }
+
 
 
 
