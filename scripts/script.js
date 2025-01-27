@@ -141,10 +141,13 @@ function enableDragAndResize(symbol) {
 
   // Début du déplacement
   symbol.addEventListener("mousedown", (event) => {
-    isDragging = true;
-    offsetX = event.clientX - symbol.offsetLeft;
-    offsetY = event.clientY - symbol.offsetTop;
-    symbol.style.cursor = "grabbing"; // Change le curseur pendant le déplacement
+    if (!event.target.classList.contains("size-slider")) {
+      // Si ce n'est pas un curseur, commence le déplacement
+      isDragging = true;
+      offsetX = event.clientX - symbol.offsetLeft;
+      offsetY = event.clientY - symbol.offsetTop;
+      symbol.style.cursor = "grabbing"; // Change le curseur pendant le déplacement
+    }
   });
 
   // Déplacement de l'émoji
@@ -189,6 +192,7 @@ function showSizeSlider(symbol) {
   // Création du conteneur du slider
   const sliderContainer = document.createElement("div");
   sliderContainer.id = "size-slider";
+  sliderContainer.className = "size-slider";
   sliderContainer.style.position = "absolute";
   sliderContainer.style.top = `${symbol.getBoundingClientRect().top - 50}px`;
   sliderContainer.style.left = `${symbol.getBoundingClientRect().left}px`;
@@ -205,14 +209,17 @@ function showSizeSlider(symbol) {
   sizeSlider.max = "150";
   sizeSlider.value = parseInt(symbol.style.width, 10) || 50; // Taille actuelle de l'émoji
   sizeSlider.style.width = "150px";
+  sizeSlider.className = "size-slider";
 
   // Création du label pour afficher la taille
   const sizeLabel = document.createElement("span");
   sizeLabel.textContent = `${sizeSlider.value}px`;
   sizeLabel.style.marginLeft = "10px";
+  sizeLabel.className = "size-slider";
 
   // Met à jour la taille de l'émoji lorsque le slider est utilisé
   sizeSlider.addEventListener("input", (event) => {
+    event.stopPropagation(); // Empêche le curseur de provoquer d'autres événements
     const newSize = sizeSlider.value;
     symbol.style.width = `${newSize}px`;
     symbol.style.height = `${newSize}px`;
@@ -227,7 +234,9 @@ function showSizeSlider(symbol) {
   closeButton.style.background = "transparent";
   closeButton.style.fontSize = "16px";
   closeButton.style.cursor = "pointer";
-  closeButton.addEventListener("click", () => {
+  closeButton.className = "size-slider";
+  closeButton.addEventListener("click", (event) => {
+    event.stopPropagation(); // Empêche les conflits
     sliderContainer.remove(); // Supprime le slider
   });
 
