@@ -361,3 +361,68 @@ async function exportCardsAsZip() {
     alert("Les 55 cartes ont été téléchargées en tant que fichier ZIP !");
   });
 }
+
+function saveGeneratedCards(cards) {
+  localStorage.setItem("generatedCards", JSON.stringify(cards));
+}
+
+function generateCards() {
+  const cardContainer = document.getElementById("cardContainer");
+  cardContainer.innerHTML = ""; // Efface les anciennes cartes
+
+  const cards = generateDobbleCards();
+  saveGeneratedCards(cards); // Sauvegarde les cartes générées
+
+  cards.forEach((card) => {
+    const cardDiv = document.createElement("div");
+    cardDiv.className = "card";
+    positionSymbols(cardDiv, card);
+    cardContainer.appendChild(cardDiv);
+  });
+}
+
+function loadGeneratedCards() {
+  const savedCards = localStorage.getItem("generatedCards");
+  if (savedCards) {
+    const cards = JSON.parse(savedCards); // Charge les cartes sauvegardées
+    const cardContainer = document.getElementById("cardContainer");
+    cardContainer.innerHTML = ""; // Efface les anciennes cartes
+
+    cards.forEach((card) => {
+      const cardDiv = document.createElement("div");
+      cardDiv.className = "card";
+      positionSymbols(cardDiv, card);
+      cardContainer.appendChild(cardDiv);
+    });
+  }
+}
+
+function updateCardEmojis() {
+  const savedCards = localStorage.getItem("generatedCards");
+  if (savedCards) {
+    const cards = JSON.parse(savedCards);
+    cards.forEach((card) => {
+      card.forEach((symbol, index) => {
+        if (emojiList.includes(symbol)) {
+          card[index] = emojiList[emojiList.indexOf(symbol)];
+        }
+      });
+    });
+    saveGeneratedCards(cards); // Sauvegarde les cartes mises à jour
+    loadGeneratedCards(); // Recharge les cartes avec les mises à jour
+  }
+}
+
+fileInput.addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      emojiList[index] = e.target.result; // Remplace l'émoji par l'image
+      saveEmojiList(); // Sauvegarde dans localStorage
+      updateCardEmojis(); // Met à jour les émojis des cartes
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
