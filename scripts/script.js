@@ -142,24 +142,14 @@ function populateEmojiTable() {
     row.appendChild(emojiCell);
 
     const inputCell = document.createElement("td");
-    const textInput = document.createElement("input");
-    textInput.type = "text";
-    textInput.placeholder = "Nouveau texte";
-    textInput.dataset.index = index;
-
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.accept = "image/*";
     fileInput.dataset.index = index;
 
-    // Personnalisation via texte
-    textInput.addEventListener("input", (event) => {
-      const value = event.target.value;
-      emojiList[index] = value || defaultEmojis[index];
-      saveEmojiList(); // Sauvegarde dans localStorage
-      populateEmojiTable(); // Met à jour la table
-      generateCards(); // Met à jour les cartes
-    });
+    const fileLabel = document.createElement("span");
+    fileLabel.id = `file-label-${index}`;
+    fileLabel.style.display = "block"; // Affiche le nom du fichier
 
     // Personnalisation via fichier
     fileInput.addEventListener("change", (event) => {
@@ -167,17 +157,20 @@ function populateEmojiTable() {
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          emojiList[index] = e.target.result;
+          emojiList[index] = e.target.result; // Stocke l'image dans la liste des émojis
           saveEmojiList(); // Sauvegarde dans localStorage
           populateEmojiTable(); // Met à jour la table
           generateCards(); // Met à jour les cartes
         };
         reader.readAsDataURL(file);
+
+        // Affiche le nom ou le chemin du fichier
+        fileLabel.textContent = `Fichier : ${file.name}`;
       }
     });
 
-    inputCell.appendChild(textInput);
     inputCell.appendChild(fileInput);
+    inputCell.appendChild(fileLabel);
     row.appendChild(inputCell);
 
     const actionCell = document.createElement("td");
