@@ -127,16 +127,37 @@ function positionSymbols(cardDiv, card) {
 function enableDragAndResize(symbol) {
   let isDragging = false;
   let offsetX, offsetY;
+  let isShiftPressed = false; // Vérifie si la touche Shift est maintenue
 
-  symbol.addEventListener("mousedown", (event) => {
-    isDragging = true;
-    offsetX = event.clientX - symbol.offsetLeft;
-    offsetY = event.clientY - symbol.offsetTop;
-    symbol.style.cursor = "grabbing"; // Change le curseur pendant le déplacement
+  // Détection de la pression sur la touche Shift
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Shift") {
+      isShiftPressed = true;
+      symbol.style.cursor = "grab"; // Change le curseur en mode grab
+    }
   });
 
+  // Détection du relâchement de la touche Shift
+  document.addEventListener("keyup", (event) => {
+    if (event.key === "Shift") {
+      isShiftPressed = false;
+      symbol.style.cursor = "default"; // Retour au curseur par défaut
+    }
+  });
+
+  // Début du déplacement
+  symbol.addEventListener("mousedown", (event) => {
+    if (isShiftPressed) {
+      isDragging = true;
+      offsetX = event.clientX - symbol.offsetLeft;
+      offsetY = event.clientY - symbol.offsetTop;
+      symbol.style.cursor = "grabbing"; // Change le curseur pendant le déplacement
+    }
+  });
+
+  // Déplacement de l'émoji
   document.addEventListener("mousemove", (event) => {
-    if (isDragging) {
+    if (isDragging && isShiftPressed) {
       const parentRect = symbol.parentElement.getBoundingClientRect();
       let newLeft = event.clientX - offsetX;
       let newTop = event.clientY - offsetY;
@@ -156,10 +177,11 @@ function enableDragAndResize(symbol) {
     }
   });
 
+  // Fin du déplacement
   document.addEventListener("mouseup", () => {
     if (isDragging) {
       isDragging = false;
-      symbol.style.cursor = "move"; // Retourne au curseur de déplacement par défaut
+      symbol.style.cursor = isShiftPressed ? "grab" : "default"; // Retourne au curseur en fonction de l'état de Shift
     }
   });
 
@@ -175,6 +197,7 @@ function enableDragAndResize(symbol) {
     }
   });
 }
+
 
 // Fonction pour réinitialiser un émoji
 function resetEmoji(index) {
