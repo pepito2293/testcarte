@@ -135,8 +135,8 @@ function enableDragAndResize(symbol) {
 
   // Affiche le curseur pour changer la taille
   symbol.addEventListener("click", (event) => {
-    event.stopPropagation(); // Empêche le clic de provoquer un autre comportement
-    showSizeSlider(symbol);
+    event.stopPropagation(); // Empêche d'autres comportements au clic
+    showSizeSlider(symbol); // Affiche le curseur pour ajuster la taille
   });
 
   // Début du déplacement
@@ -190,7 +190,7 @@ function showSizeSlider(symbol) {
   const sliderContainer = document.createElement("div");
   sliderContainer.id = "size-slider";
   sliderContainer.style.position = "absolute";
-  sliderContainer.style.top = `${symbol.getBoundingClientRect().top - 40}px`;
+  sliderContainer.style.top = `${symbol.getBoundingClientRect().top - 50}px`;
   sliderContainer.style.left = `${symbol.getBoundingClientRect().left}px`;
   sliderContainer.style.backgroundColor = "#ffffff";
   sliderContainer.style.padding = "10px";
@@ -202,7 +202,7 @@ function showSizeSlider(symbol) {
   const sizeSlider = document.createElement("input");
   sizeSlider.type = "range";
   sizeSlider.min = "20";
-  sizeSlider.max = "100";
+  sizeSlider.max = "150";
   sizeSlider.value = parseInt(symbol.style.width, 10) || 50; // Taille actuelle de l'émoji
   sizeSlider.style.width = "150px";
 
@@ -213,7 +213,6 @@ function showSizeSlider(symbol) {
 
   // Met à jour la taille de l'émoji lorsque le slider est utilisé
   sizeSlider.addEventListener("input", (event) => {
-    event.stopPropagation(); // Empêche le slider de provoquer d'autres événements
     const newSize = sizeSlider.value;
     symbol.style.width = `${newSize}px`;
     symbol.style.height = `${newSize}px`;
