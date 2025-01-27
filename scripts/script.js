@@ -58,8 +58,8 @@ function generateCards() {
 function positionSymbols(cardDiv, card) {
   const cardSize = 250;
   const margin = 20;
-  const minSize = parseInt(document.getElementById("minSize").value, 10);
-  const maxSize = parseInt(document.getElementById("maxSize").value, 10);
+  const minSize = parseInt(document.getElementById("minSize").value, 10) || 30;
+  const maxSize = parseInt(document.getElementById("maxSize").value, 10) || 70;
   const positions = [];
 
   card.forEach((symbol) => {
@@ -138,13 +138,14 @@ function populateEmojiTable() {
     fileInput.accept = "image/*";
     fileInput.dataset.index = index;
 
+    // Personnalisation via texte
     textInput.addEventListener("input", (event) => {
-      const value = event.target.value;
-      emojiList[index] = value || defaultEmojis[index];
+      emojiList[index] = event.target.value || defaultEmojis[index];
       populateEmojiTable(); // Met à jour la table
       generateCards(); // Met à jour les cartes
     });
 
+    // Personnalisation via fichier
     fileInput.addEventListener("change", (event) => {
       const file = event.target.files[0];
       if (file) {
@@ -179,12 +180,6 @@ function resetEmoji(index) {
   populateEmojiTable();
   generateCards();
   alert(`L'émoji #${index + 1} a été réinitialisé !`);
-}
-
-// Fonction pour appliquer toutes les personnalisations
-function applyCustomizations() {
-  generateCards();
-  alert("Les émojis personnalisés ont été appliqués !");
 }
 
 // Initialisation au chargement de la page
