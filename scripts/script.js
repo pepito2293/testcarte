@@ -165,7 +165,7 @@ function populateEmojiTable() {
         reader.readAsDataURL(file);
 
         // Affiche le nom ou le chemin du fichier
-        fileLabel.textContent = `Fichier : ${file.name}`;
+        fileLabel.textContent = file.name;
       }
     });
 
