@@ -319,3 +319,29 @@ document.addEventListener("DOMContentLoaded", () => {
     generateCards();
   });
 });
+
+async function exportCardsAsPNG() {
+  const cardContainer = document.getElementById("cardContainer");
+  const cards = cardContainer.querySelectorAll(".card");
+
+  if (cards.length === 0) {
+    alert("Aucune carte à exporter. Veuillez d'abord générer les cartes.");
+    return;
+  }
+
+  for (let i = 0; i < cards.length; i++) {
+    const canvas = await html2canvas(cards[i], { scale: 2 }); // Génère une image haute résolution
+    const imgData = canvas.toDataURL("image/png"); // Convertit en PNG
+
+    // Crée un lien pour télécharger l'image
+    const link = document.createElement("a");
+    link.href = imgData;
+    link.download = `carte_dobble_${i + 1}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  alert("Les cartes ont été exportées en PNG avec succès !");
+}
+
