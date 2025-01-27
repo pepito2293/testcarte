@@ -275,3 +275,21 @@ function resetEmoji(index) {
   generateCards();
   alert(`L'émoji #${index + 1} a été réinitialisé !`);
 }
+
+// Fonction pour mettre à jour l'aperçu des tailles minimale et maximale
+function updatePreview() {
+  const minSizeInput = document.getElementById("minSize");
+  const maxSizeInput = document.getElementById("maxSize");
+  const minSizeValue = document.getElementById("minSizeValue");
+  const maxSizeValue = document.getElementById("maxSizeValue");
+
+  // Met à jour les valeurs affichées
+  minSizeValue.textContent = `${minSizeInput.value}px`;
+  maxSizeValue.textContent = `${maxSizeInput.value}px`;
+
+  // Vérifie que la taille minimale est inférieure ou égale à la taille maximale
+  if (parseInt(minSizeInput.value) > parseInt(maxSizeInput.value)) {
+    maxSizeInput.value = minSizeInput.value; // Ajuste la taille maximale
+    maxSizeValue.textContent = `${maxSizeInput.value}px`;
+  }
+}
