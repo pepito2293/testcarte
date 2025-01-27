@@ -134,7 +134,8 @@ function enableDragAndResize(symbol) {
   });
 
   // Affiche le curseur pour changer la taille
-  symbol.addEventListener("click", () => {
+  symbol.addEventListener("click", (event) => {
+    event.stopPropagation(); // Empêche le clic de provoquer un autre comportement
     showSizeSlider(symbol);
   });
 
@@ -211,7 +212,8 @@ function showSizeSlider(symbol) {
   sizeLabel.style.marginLeft = "10px";
 
   // Met à jour la taille de l'émoji lorsque le slider est utilisé
-  sizeSlider.addEventListener("input", () => {
+  sizeSlider.addEventListener("input", (event) => {
+    event.stopPropagation(); // Empêche le slider de provoquer d'autres événements
     const newSize = sizeSlider.value;
     symbol.style.width = `${newSize}px`;
     symbol.style.height = `${newSize}px`;
@@ -238,8 +240,6 @@ function showSizeSlider(symbol) {
   // Ajoute le conteneur au document
   document.body.appendChild(sliderContainer);
 }
-
-
 
 
 
