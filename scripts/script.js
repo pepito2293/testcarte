@@ -8,8 +8,22 @@ const defaultEmojis = [
   "🌴", "🚲", "🎮", "⚡", "⭐", "🌟", "☕"
 ];
 
-// Initialisation de la liste des émojis (copie de la liste par défaut)
-let emojiList = [...defaultEmojis];
+// Fonction pour charger les émojis personnalisés depuis `localStorage`
+function loadEmojiList() {
+  const storedEmojis = localStorage.getItem("emojiList");
+  if (storedEmojis) {
+    return JSON.parse(storedEmojis); // Charge les émojis personnalisés
+  }
+  return [...defaultEmojis]; // Si rien n'est trouvé, retourne la liste par défaut
+}
+
+// Fonction pour sauvegarder les émojis dans `localStorage`
+function saveEmojiList() {
+  localStorage.setItem("emojiList", JSON.stringify(emojiList));
+}
+
+// Initialisation de la liste des émojis (personnalisée ou par défaut)
+let emojiList = loadEmojiList();
 
 // Fonction pour générer les cartes Dobble
 function generateDobbleCards() {
@@ -140,7 +154,9 @@ function populateEmojiTable() {
 
     // Personnalisation via texte
     textInput.addEventListener("input", (event) => {
-      emojiList[index] = event.target.value || defaultEmojis[index];
+      const value = event.target.value;
+      emojiList[index] = value || defaultEmojis[index];
+      saveEmojiList(); // Sauvegarde dans localStorage
       populateEmojiTable(); // Met à jour la table
       generateCards(); // Met à jour les cartes
     });
@@ -152,6 +168,7 @@ function populateEmojiTable() {
         const reader = new FileReader();
         reader.onload = (e) => {
           emojiList[index] = e.target.result;
+          saveEmojiList(); // Sauvegarde dans localStorage
           populateEmojiTable(); // Met à jour la table
           generateCards(); // Met à jour les cartes
         };
@@ -177,6 +194,7 @@ function populateEmojiTable() {
 // Fonction pour réinitialiser un émoji
 function resetEmoji(index) {
   emojiList[index] = defaultEmojis[index]; // Réinitialise à la valeur par défaut
+  saveEmojiList(); // Sauvegarde dans localStorage
   populateEmojiTable();
   generateCards();
   alert(`L'émoji #${index + 1} a été réinitialisé !`);
