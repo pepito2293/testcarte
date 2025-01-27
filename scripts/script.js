@@ -8,23 +8,23 @@ const defaultEmojis = [
   "🌴", "🚲", "🎮", "⚡", "⭐", "🌟", "☕"
 ];
 
-// Fonction pour charger la liste des émojis à partir du localStorage
+// Fonction pour charger les émojis à partir de localStorage
 function loadEmojiList() {
   const storedEmojis = localStorage.getItem("emojiList");
   if (storedEmojis) {
     return JSON.parse(storedEmojis); // Charge les émojis personnalisés
   }
-  // Sinon, retourne la liste par défaut
+  // Sinon, retourne une copie de la liste par défaut
   return [...defaultEmojis];
 }
 
-// Fonction pour sauvegarder la liste des émojis dans localStorage
+// Fonction pour sauvegarder les émojis dans localStorage
 function saveEmojiList() {
   localStorage.setItem("emojiList", JSON.stringify(emojiList));
 }
 
 // Initialisation de la liste des émojis
-const emojiList = loadEmojiList();
+let emojiList = loadEmojiList();
 
 // Fonction pour afficher un message de confirmation
 function showConfirmationMessage(message) {
@@ -175,6 +175,26 @@ function populateEmojiTable() {
     fileInput.accept = "image/*";
     fileInput.dataset.index = index;
 
+    textInput.addEventListener("input", (event) => {
+      const value = event.target.value;
+      emojiList[index] = value || emojiList[index];
+      saveEmojiList();
+      populateEmojiTable();
+    });
+
+    fileInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          emojiList[index] = e.target.result;
+          saveEmojiList();
+          populateEmojiTable();
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
     inputCell.appendChild(textInput);
     inputCell.appendChild(fileInput);
     row.appendChild(inputCell);
@@ -192,26 +212,21 @@ function populateEmojiTable() {
 
 // Fonction pour réinitialiser un émoji
 function resetEmoji(index) {
-  emojiList[index] = defaultEmojis[index]; // Utilise les émojis par défaut
-  saveEmojiList(); // Sauvegarde la mise à jour dans localStorage
-  populateEmojiTable(); // Met à jour la table des émojis
-  generateCards(); // Regénère les cartes avec les émojis réinitialisés
+  emojiList[index] = defaultEmojis[index]; // Réinitialise avec les émojis par défaut
+  saveEmojiList();
+  populateEmojiTable();
+  generateCards();
   showConfirmationMessage(`L'émoji #${index + 1} a été réinitialisé !`);
 }
 
-// Fonction pour appliquer les personnalisations
+// Fonction pour appliquer toutes les personnalisations
 function applyCustomizations() {
-  populateEmojiTable();
   generateCards();
-  showConfirmationMessage("Les émojis ont été mis à jour !");
+  showConfirmationMessage("Personnalisations appliquées !");
 }
 
 // Initialisation
 document.addEventListener("DOMContentLoaded", () => {
-  if (document.getElementById("emojiTable")) {
-    populateEmojiTable();
-  }
-  if (document.getElementById("cardContainer")) {
-    generateCards();
-  }
+  populateEmojiTable();
+  generateCards();
 });
