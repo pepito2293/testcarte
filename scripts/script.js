@@ -24,6 +24,7 @@ function saveEmojiList() {
 
 // Initialisation de la liste des émojis (personnalisée ou par défaut)
 let emojiList = loadEmojiList();
+let activeSymbol = null; // Émoji actuellement sélectionné pour modification
 
 // Fonction pour générer les cartes Dobble
 function generateDobbleCards() {
@@ -113,74 +114,65 @@ function positionSymbols(cardDiv, card) {
       top: `${y}px`,
       width: `${size}px`,
       height: `${size}px`,
-      transform: `rotate(${rotation}deg)`
+      transform: `rotate(${rotation}deg)`,
+      cursor: "move"
     });
 
+    enableDragAndResize(symbolDiv); // Active le déplacement et le redimensionnement
     cardDiv.appendChild(symbolDiv);
   });
 }
 
-// Fonction pour remplir le tableau des émojis personnalisables
-function populateEmojiTable() {
-  const tableBody = document.getElementById("emojiTable").querySelector("tbody");
-  tableBody.innerHTML = "";
+// Fonction pour activer le déplacement et le redimensionnement des symboles
+function enableDragAndResize(symbol) {
+  let isDragging = false;
+  let offsetX, offsetY;
 
-  emojiList.forEach((emoji, index) => {
-    const row = document.createElement("tr");
+  symbol.addEventListener("mousedown", (event) => {
+    isDragging = true;
+    offsetX = event.clientX - symbol.offsetLeft;
+    offsetY = event.clientY - symbol.offsetTop;
+    symbol.style.cursor = "grabbing"; // Change le curseur pendant le déplacement
+  });
 
-    const numberCell = document.createElement("td");
-    numberCell.textContent = index + 1;
-    row.appendChild(numberCell);
+  document.addEventListener("mousemove", (event) => {
+    if (isDragging) {
+      const parentRect = symbol.parentElement.getBoundingClientRect();
+      let newLeft = event.clientX - offsetX;
+      let newTop = event.clientY - offsetY;
 
-    const emojiCell = document.createElement("td");
-    if (emoji.startsWith("data:image")) {
-      emojiCell.innerHTML = `<img src="${emoji}" width="20" height="20">`;
-    } else {
-      emojiCell.textContent = emoji;
-    }
-    emojiCell.id = `current-emoji-${index}`;
-    row.appendChild(emojiCell);
-
-    const inputCell = document.createElement("td");
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
-    fileInput.dataset.index = index;
-
-    const fileLabel = document.createElement("span");
-    fileLabel.id = `file-label-${index}`;
-    fileLabel.style.display = "block"; // Affiche le nom du fichier
-
-    // Personnalisation via fichier
-    fileInput.addEventListener("change", (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          emojiList[index] = e.target.result; // Stocke l'image dans la liste des émojis
-          saveEmojiList(); // Sauvegarde dans localStorage
-          populateEmojiTable(); // Met à jour la table
-          generateCards(); // Met à jour les cartes
-        };
-        reader.readAsDataURL(file);
-
-        // Affiche le nom ou le chemin du fichier
-        fileLabel.textContent = file.name;
+      // Empêche le symbole de sortir de la carte
+      if (newLeft < 0) newLeft = 0;
+      if (newTop < 0) newTop = 0;
+      if (newLeft + symbol.offsetWidth > parentRect.width) {
+        newLeft = parentRect.width - symbol.offsetWidth;
       }
-    });
+      if (newTop + symbol.offsetHeight > parentRect.height) {
+        newTop = parentRect.height - symbol.offsetHeight;
+      }
 
-    inputCell.appendChild(fileInput);
-    inputCell.appendChild(fileLabel);
-    row.appendChild(inputCell);
+      symbol.style.left = `${newLeft}px`;
+      symbol.style.top = `${newTop}px`;
+    }
+  });
 
-    const actionCell = document.createElement("td");
-    const resetButton = document.createElement("button");
-    resetButton.textContent = "Réinitialiser";
-    resetButton.onclick = () => resetEmoji(index);
-    actionCell.appendChild(resetButton);
-    row.appendChild(actionCell);
+  document.addEventListener("mouseup", () => {
+    if (isDragging) {
+      isDragging = false;
+      symbol.style.cursor = "move"; // Retourne au curseur de déplacement par défaut
+    }
+  });
 
-    tableBody.appendChild(row);
+  // Permet le redimensionnement via la molette de la souris
+  symbol.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    const currentSize = parseInt(symbol.style.width, 10);
+    const newSize = event.deltaY < 0 ? currentSize + 5 : currentSize - 5;
+
+    if (newSize >= 20 && newSize <= 100) {
+      symbol.style.width = `${newSize}px`;
+      symbol.style.height = `${newSize}px`;
+    }
   });
 }
 
