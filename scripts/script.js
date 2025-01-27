@@ -69,8 +69,11 @@ function generateCards() {
 function positionSymbols(cardDiv, card) {
   const cardSize = 250;
   const margin = 20;
+
+  // Récupère les valeurs des curseurs pour les tailles minimale et maximale
   const minSize = parseInt(document.getElementById("minSize").value, 10) || 30;
   const maxSize = parseInt(document.getElementById("maxSize").value, 10) || 70;
+
   const positions = [];
 
   card.forEach((symbol) => {
@@ -78,10 +81,11 @@ function positionSymbols(cardDiv, card) {
     let x, y, size;
 
     while (!isValidPosition) {
-      size = Math.random() * (maxSize - minSize) + minSize;
+      size = Math.random() * (maxSize - minSize) + minSize; // Taille aléatoire
       x = margin + Math.random() * (cardSize - 2 * margin - size);
       y = margin + Math.random() * (cardSize - 2 * margin - size);
 
+      // Vérifie que les émojis ne se chevauchent pas
       isValidPosition = positions.every(pos => {
         const distance = Math.sqrt(Math.pow(pos.x - x, 2) + Math.pow(pos.y - y, 2));
         return distance > (pos.size + size) / 2 + 10;
@@ -90,6 +94,7 @@ function positionSymbols(cardDiv, card) {
 
     positions.push({ x, y, size });
 
+    const rotation = Math.random() * 360; // Rotation aléatoire entre 0 et 360 degrés
     const symbolDiv = document.createElement("div");
     symbolDiv.className = "symbol";
 
@@ -104,14 +109,17 @@ function positionSymbols(cardDiv, card) {
       symbolDiv.style.fontSize = `${size}px`;
     }
 
+    // Applique les styles, y compris la rotation
     Object.assign(symbolDiv.style, {
       left: `${x}px`,
       top: `${y}px`,
       width: `${size}px`,
-      height: `${size}px`
+      height: `${size}px`,
+      transform: `rotate(${rotation}deg)`, // Applique la rotation
+      transformOrigin: "center", // Centre la rotation
     });
 
-    enableDrag(symbolDiv); // Active le déplacement
+    enableDrag(symbolDiv); // Active le déplacement pour chaque émoji
     cardDiv.appendChild(symbolDiv);
   });
 }
