@@ -8,45 +8,8 @@ const defaultEmojis = [
   "🌴", "🚲", "🎮", "⚡", "⭐", "🌟", "☕"
 ];
 
-// Fonction pour charger les émojis à partir de localStorage
-function loadEmojiList() {
-  const storedEmojis = localStorage.getItem("emojiList");
-  if (storedEmojis) {
-    return JSON.parse(storedEmojis); // Charge les émojis personnalisés
-  }
-  // Sinon, retourne une copie de la liste par défaut
-  return [...defaultEmojis];
-}
-
-// Fonction pour sauvegarder les émojis dans localStorage
-function saveEmojiList() {
-  localStorage.setItem("emojiList", JSON.stringify(emojiList));
-}
-
-// Initialisation de la liste des émojis
-let emojiList = loadEmojiList();
-
-// Fonction pour afficher un message de confirmation
-function showConfirmationMessage(message) {
-  const confirmationBox = document.createElement("div");
-  confirmationBox.textContent = message;
-  confirmationBox.style.position = "fixed";
-  confirmationBox.style.bottom = "20px";
-  confirmationBox.style.right = "20px";
-  confirmationBox.style.padding = "10px 20px";
-  confirmationBox.style.backgroundColor = "#4CAF50"; // Vert succès
-  confirmationBox.style.color = "#fff";
-  confirmationBox.style.borderRadius = "5px";
-  confirmationBox.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.2)";
-  confirmationBox.style.zIndex = "1000";
-
-  document.body.appendChild(confirmationBox);
-
-  // Retirer le message après 3 secondes
-  setTimeout(() => {
-    document.body.removeChild(confirmationBox);
-  }, 3000);
-}
+// Initialisation de la liste des émojis (toujours par défaut au chargement)
+let emojiList = [...defaultEmojis];
 
 // Fonction pour générer les cartes Dobble
 function generateDobbleCards() {
@@ -177,9 +140,8 @@ function populateEmojiTable() {
 
     textInput.addEventListener("input", (event) => {
       const value = event.target.value;
-      emojiList[index] = value || emojiList[index];
-      saveEmojiList();
-      populateEmojiTable();
+      emojiList[index] = value || defaultEmojis[index];
+      populateEmojiTable(); // Met à jour la table
     });
 
     fileInput.addEventListener("change", (event) => {
@@ -188,8 +150,7 @@ function populateEmojiTable() {
         const reader = new FileReader();
         reader.onload = (e) => {
           emojiList[index] = e.target.result;
-          saveEmojiList();
-          populateEmojiTable();
+          populateEmojiTable(); // Met à jour la table
         };
         reader.readAsDataURL(file);
       }
@@ -212,20 +173,19 @@ function populateEmojiTable() {
 
 // Fonction pour réinitialiser un émoji
 function resetEmoji(index) {
-  emojiList[index] = defaultEmojis[index]; // Réinitialise avec les émojis par défaut
-  saveEmojiList();
+  emojiList[index] = defaultEmojis[index]; // Réinitialise à la valeur par défaut
   populateEmojiTable();
   generateCards();
-  showConfirmationMessage(`L'émoji #${index + 1} a été réinitialisé !`);
+  alert(`L'émoji #${index + 1} a été réinitialisé !`);
 }
 
-// Fonction pour appliquer toutes les personnalisations
+// Fonction pour appliquer les personnalisations
 function applyCustomizations() {
   generateCards();
-  showConfirmationMessage("Personnalisations appliquées !");
+  alert("Les émojis personnalisés ont été appliqués !");
 }
 
-// Initialisation
+// Initialisation au chargement de la page
 document.addEventListener("DOMContentLoaded", () => {
   populateEmojiTable();
   generateCards();
