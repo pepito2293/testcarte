@@ -23,14 +23,35 @@ function saveEmojiList() {
 // Initialisation de la liste des émojis
 const emojiList = loadEmojiList();
 
+// Fonction pour afficher un message de confirmation
+function showConfirmationMessage(message) {
+  const confirmationBox = document.createElement("div");
+  confirmationBox.textContent = message;
+  confirmationBox.style.position = "fixed";
+  confirmationBox.style.bottom = "20px";
+  confirmationBox.style.right = "20px";
+  confirmationBox.style.padding = "10px 20px";
+  confirmationBox.style.backgroundColor = "#4CAF50"; // Vert succès
+  confirmationBox.style.color = "#fff";
+  confirmationBox.style.borderRadius = "5px";
+  confirmationBox.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.2)";
+  confirmationBox.style.zIndex = "1000";
+
+  document.body.appendChild(confirmationBox);
+
+  // Retirer le message après 3 secondes
+  setTimeout(() => {
+    document.body.removeChild(confirmationBox);
+  }, 3000);
+}
+
 // Fonction pour générer les cartes Dobble
 function generateDobbleCards() {
   const n = 7; // Nombre de symboles par carte - 1
   const totalSymbols = n * n + n + 1; // Nombre total de symboles nécessaires
-  const symbols = emojiList.slice(0, totalSymbols); // Utilise les émojis mis à jour
+  const symbols = emojiList.slice(0, totalSymbols);
   const cards = [];
 
-  // Génère les cartes avec la liste d'émojis actuelle
   for (let i = 0; i <= n; i++) {
     const card = [symbols[0]];
     for (let j = 0; j < n; j++) {
@@ -58,7 +79,7 @@ function generateCards() {
   const cardContainer = document.getElementById("cardContainer");
   cardContainer.innerHTML = ""; // Efface les anciennes cartes
 
-  const cards = generateDobbleCards(); // Génère les cartes avec la liste d'émojis mise à jour
+  const cards = generateDobbleCards();
   cards.forEach((card) => {
     const cardDiv = document.createElement("div");
     cardDiv.className = "card";
@@ -122,7 +143,7 @@ function positionSymbols(cardDiv, card) {
 // Fonction pour remplir le tableau des émojis personnalisables
 function populateEmojiTable() {
   const tableBody = document.getElementById("emojiTable").querySelector("tbody");
-  tableBody.innerHTML = ""; // Vide le tableau avant de le remplir
+  tableBody.innerHTML = "";
 
   emojiList.forEach((emoji, index) => {
     const row = document.createElement("tr");
@@ -155,7 +176,7 @@ function populateEmojiTable() {
       const value = event.target.value;
       emojiList[index] = value || emojiList[index];
       document.getElementById(`current-emoji-${index}`).textContent = value || emojiList[index];
-      saveEmojiList(); // Sauvegarde après modification
+      saveEmojiList();
     });
 
     fileInput.addEventListener("change", (event) => {
@@ -165,7 +186,7 @@ function populateEmojiTable() {
         reader.onload = (e) => {
           emojiList[index] = e.target.result;
           document.getElementById(`current-emoji-${index}`).innerHTML = `<img src="${e.target.result}" width="20" height="20">`;
-          saveEmojiList(); // Sauvegarde après modification
+          saveEmojiList();
         };
         reader.readAsDataURL(file);
       }
@@ -189,16 +210,18 @@ function populateEmojiTable() {
 // Fonction pour réinitialiser un émoji
 function resetEmoji(index) {
   const defaultEmojis = loadEmojiList();
-  emojiList[index] = defaultEmojis[index]; // Réinitialise l'émoji
-  saveEmojiList(); // Sauvegarde la liste réinitialisée
-  populateEmojiTable(); // Met à jour le tableau
+  emojiList[index] = defaultEmojis[index];
+  saveEmojiList();
+  populateEmojiTable();
+  generateCards();
+  showConfirmationMessage(`L'émoji #${index + 1} a été réinitialisé !`);
 }
 
 // Fonction pour appliquer les personnalisations
 function applyCustomizations() {
-  populateEmojiTable(); // Met à jour le tableau
-  generateCards(); // Met à jour les cartes
-  alert("Personnalisations appliquées !");
+  populateEmojiTable();
+  generateCards();
+  showConfirmationMessage("Les émojis ont été mis à jour !");
 }
 
 // Initialisation
