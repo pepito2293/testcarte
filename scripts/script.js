@@ -8,14 +8,14 @@ const defaultEmojis = [
   "🌴", "🚲", "🎮", "⚡", "⭐", "🌟", "☕"
 ];
 
-// Initialisation de la liste des émojis (toujours par défaut au chargement)
+// Initialisation de la liste des émojis (copie de la liste par défaut)
 let emojiList = [...defaultEmojis];
 
 // Fonction pour générer les cartes Dobble
 function generateDobbleCards() {
   const n = 7; // Nombre de symboles par carte - 1
   const totalSymbols = n * n + n + 1; // Nombre total de symboles nécessaires
-  const symbols = emojiList.slice(0, totalSymbols);
+  const symbols = emojiList.slice(0, totalSymbols); // Utilise les émojis personnalisés ou par défaut
   const cards = [];
 
   for (let i = 0; i <= n; i++) {
@@ -142,6 +142,7 @@ function populateEmojiTable() {
       const value = event.target.value;
       emojiList[index] = value || defaultEmojis[index];
       populateEmojiTable(); // Met à jour la table
+      generateCards(); // Met à jour les cartes
     });
 
     fileInput.addEventListener("change", (event) => {
@@ -151,6 +152,7 @@ function populateEmojiTable() {
         reader.onload = (e) => {
           emojiList[index] = e.target.result;
           populateEmojiTable(); // Met à jour la table
+          generateCards(); // Met à jour les cartes
         };
         reader.readAsDataURL(file);
       }
@@ -179,7 +181,7 @@ function resetEmoji(index) {
   alert(`L'émoji #${index + 1} a été réinitialisé !`);
 }
 
-// Fonction pour appliquer les personnalisations
+// Fonction pour appliquer toutes les personnalisations
 function applyCustomizations() {
   generateCards();
   alert("Les émojis personnalisés ont été appliqués !");
