@@ -125,39 +125,20 @@ function positionSymbols(cardDiv, card) {
 
 // Fonction pour activer le déplacement et le redimensionnement des symboles
 function enableDragAndResize(symbol) {
-  let isDragging = false;
+  let isDragging = false; // Indique si le symbole est en cours de déplacement
   let offsetX, offsetY;
-  let isShiftPressed = false; // Vérifie si la touche Shift est maintenue
-
-  // Détection de la pression sur la touche Shift
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Shift") {
-      isShiftPressed = true;
-      symbol.style.cursor = "grab"; // Change le curseur en mode grab
-    }
-  });
-
-  // Détection du relâchement de la touche Shift
-  document.addEventListener("keyup", (event) => {
-    if (event.key === "Shift") {
-      isShiftPressed = false;
-      symbol.style.cursor = "default"; // Retour au curseur par défaut
-    }
-  });
 
   // Début du déplacement
   symbol.addEventListener("mousedown", (event) => {
-    if (isShiftPressed) {
-      isDragging = true;
-      offsetX = event.clientX - symbol.offsetLeft;
-      offsetY = event.clientY - symbol.offsetTop;
-      symbol.style.cursor = "grabbing"; // Change le curseur pendant le déplacement
-    }
+    isDragging = true;
+    offsetX = event.clientX - symbol.offsetLeft;
+    offsetY = event.clientY - symbol.offsetTop;
+    symbol.style.cursor = "grabbing"; // Change le curseur pendant le déplacement
   });
 
   // Déplacement de l'émoji
   document.addEventListener("mousemove", (event) => {
-    if (isDragging && isShiftPressed) {
+    if (isDragging) {
       const parentRect = symbol.parentElement.getBoundingClientRect();
       let newLeft = event.clientX - offsetX;
       let newTop = event.clientY - offsetY;
@@ -181,7 +162,7 @@ function enableDragAndResize(symbol) {
   document.addEventListener("mouseup", () => {
     if (isDragging) {
       isDragging = false;
-      symbol.style.cursor = isShiftPressed ? "grab" : "default"; // Retourne au curseur en fonction de l'état de Shift
+      symbol.style.cursor = "move"; // Retourne au curseur par défaut
     }
   });
 
@@ -197,6 +178,7 @@ function enableDragAndResize(symbol) {
     }
   });
 }
+
 
 
 // Fonction pour réinitialiser un émoji
