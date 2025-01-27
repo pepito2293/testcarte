@@ -300,9 +300,9 @@ function updateSizeValues() {
   const minSizeValue = document.getElementById("minSizeValue");
   const maxSizeValue = document.getElementById("maxSizeValue");
 
-  // Assure que la taille minimale ne dépasse pas 35 px
-  if (parseInt(minSizeInput.value) > 35) {
-    minSizeInput.value = 35;
+  // Assure que la taille minimale ne dépasse pas 30 px
+  if (parseInt(minSizeInput.value) > 30) {
+    minSizeInput.value = 30;
   }
 
   // Synchronise les valeurs affichées
