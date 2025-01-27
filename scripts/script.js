@@ -190,3 +190,77 @@ document.addEventListener("DOMContentLoaded", () => {
   populateEmojiTable();
   generateCards();
 });
+
+// Fonction pour remplir le tableau des émojis personnalisables
+function populateEmojiTable() {
+  const tableBody = document.getElementById("emojiTable").querySelector("tbody");
+  tableBody.innerHTML = "";
+
+  emojiList.forEach((emoji, index) => {
+    const row = document.createElement("tr");
+
+    const numberCell = document.createElement("td");
+    numberCell.textContent = index + 1;
+    row.appendChild(numberCell);
+
+    const emojiCell = document.createElement("td");
+    if (emoji.startsWith("data:image")) {
+      emojiCell.innerHTML = `<img src="${emoji}" width="20" height="20">`;
+    } else {
+      emojiCell.textContent = emoji;
+    }
+    emojiCell.id = `current-emoji-${index}`;
+    row.appendChild(emojiCell);
+
+    const inputCell = document.createElement("td");
+
+    // Création du bouton stylisé pour l'upload
+    const uploadButton = document.createElement("label");
+    uploadButton.className = "custom-file-upload";
+    uploadButton.textContent = "Choisir un fichier";
+
+    // Champ input file (caché)
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.dataset.index = index;
+
+    uploadButton.appendChild(fileInput);
+    inputCell.appendChild(uploadButton);
+
+    // Gestion de l'upload de fichier
+    fileInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          emojiList[index] = e.target.result; // Remplace l'émoji par l'image
+          saveEmojiList(); // Sauvegarde dans localStorage
+          populateEmojiTable(); // Met à jour le tableau
+          generateCards(); // Met à jour les cartes
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    row.appendChild(inputCell);
+
+    const actionCell = document.createElement("td");
+    const resetButton = document.createElement("button");
+    resetButton.textContent = "Réinitialiser";
+    resetButton.onclick = () => resetEmoji(index);
+    actionCell.appendChild(resetButton);
+    row.appendChild(actionCell);
+
+    tableBody.appendChild(row);
+  });
+}
+
+// Fonction pour réinitialiser un émoji
+function resetEmoji(index) {
+  emojiList[index] = defaultEmojis[index]; // Réinitialise à la valeur par défaut
+  saveEmojiList(); // Sauvegarde dans localStorage
+  populateEmojiTable();
+  generateCards();
+  alert(`L'émoji #${index + 1} a été réinitialisé !`);
+}
