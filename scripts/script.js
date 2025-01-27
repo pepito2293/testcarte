@@ -1,3 +1,4 @@
+
 // Liste des émojis par défaut
 const defaultEmojis = [
   "🍓", "🍕", "🍔", "🌵", "🐱", "🐟", "🎸", "🎨", "📱", "🚗",
@@ -67,10 +68,10 @@ function generateCards() {
 
 // Fonction pour positionner les symboles sur une carte
 function positionSymbols(cardDiv, card) {
-  const cardSize = 250; // Taille fixe des cartes
-  const margin = 20; // Marges pour éviter les débordements
+  const cardSize = 250;
+  const margin = 20;
 
-  // Récupère les valeurs des curseurs
+  // Récupère les valeurs des curseurs pour les tailles minimale et maximale
   const minSize = parseInt(document.getElementById("minSize").value, 10) || 30;
   const maxSize = parseInt(document.getElementById("maxSize").value, 10) || 70;
 
@@ -85,33 +86,44 @@ function positionSymbols(cardDiv, card) {
       x = margin + Math.random() * (cardSize - 2 * margin - size);
       y = margin + Math.random() * (cardSize - 2 * margin - size);
 
-      // Vérifie que les symboles ne se chevauchent pas
+      // Vérifie que les émojis ne se chevauchent pas
       isValidPosition = positions.every(pos => {
         const distance = Math.sqrt(Math.pow(pos.x - x, 2) + Math.pow(pos.y - y, 2));
-        return distance > (pos.size + size) / 2 + 10; // Marge entre symboles
+        return distance > (pos.size + size) / 2 + 10;
       });
     }
 
     positions.push({ x, y, size });
 
+    const rotation = Math.random() * 360; // Rotation aléatoire entre 0 et 360 degrés
     const symbolDiv = document.createElement("div");
     symbolDiv.className = "symbol";
-    symbolDiv.textContent = symbol;
 
+    if (symbol.startsWith("data:image")) {
+      const img = document.createElement("img");
+      img.src = symbol;
+      img.style.width = `${size}px`;
+      img.style.height = `${size}px`;
+      symbolDiv.appendChild(img);
+    } else {
+      symbolDiv.textContent = symbol;
+      symbolDiv.style.fontSize = `${size}px`;
+    }
+
+    // Applique les styles, y compris la rotation
     Object.assign(symbolDiv.style, {
-      fontSize: `${size}px`,
       left: `${x}px`,
       top: `${y}px`,
       width: `${size}px`,
       height: `${size}px`,
-      transform: `rotate(${Math.random() * 360}deg)` // Rotation aléatoire
+      transform: `rotate(${rotation}deg)`, // Applique la rotation
+      transformOrigin: "center", // Centre la rotation
     });
 
-    enableDrag(symbolDiv); // Active le déplacement
+    enableDrag(symbolDiv); // Active le déplacement pour chaque émoji
     cardDiv.appendChild(symbolDiv);
   });
 }
-
 
 // Fonction pour activer le déplacement des émojis
 function enableDrag(symbol) {
