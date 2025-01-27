@@ -1,4 +1,5 @@
 
+
 // Liste des émojis par défaut
 const defaultEmojis = [
   "🍓", "🍕", "🍔", "🌵", "🐱", "🐟", "🎸", "🎨", "📱", "🚗",
@@ -300,9 +301,9 @@ function updateSizeValues() {
   const minSizeValue = document.getElementById("minSizeValue");
   const maxSizeValue = document.getElementById("maxSizeValue");
 
-  // Assure que la taille minimale ne dépasse pas 35 px
-  if (parseInt(minSizeInput.value) > 35) {
-    minSizeInput.value = 35;
+  // Assure que la taille minimale ne dépasse pas 30 px
+  if (parseInt(minSizeInput.value) > 30) {
+    minSizeInput.value = 30;
   }
 
   // Synchronise les valeurs affichées
@@ -317,12 +318,20 @@ function updateSizeValues() {
 }
 
 // Mise à jour des cartes lorsque les curseurs changent
+let isUpdating = false; // Variable pour éviter des appels multiples
+
 function handleSizeChange() {
-  updateSizeValues(); // Met à jour les affichages
-  generateCards(); // Regénère les cartes avec les nouvelles tailles
+  if (!isUpdating) {
+    isUpdating = true;
+    requestAnimationFrame(() => {
+      updateSizeValues(); // Met à jour les tailles affichées
+      generateCards(); // Regénère les cartes
+      isUpdating = false; // Permet une nouvelle mise à jour
+    });
+  }
 }
 
-// Relie les événements des curseurs aux fonctions
+// Relie les curseurs aux événements
 document.getElementById("minSize").addEventListener("input", handleSizeChange);
 document.getElementById("maxSize").addEventListener("input", handleSizeChange);
 
@@ -353,3 +362,67 @@ async function exportCardsAsZip() {
     alert("Les 55 cartes ont été téléchargées en tant que fichier ZIP !");
   });
 }
+
+function saveGeneratedCards(cards) {
+  localStorage.setItem("generatedCards", JSON.stringify(cards));
+}
+
+function generateCards() {
+  const cardContainer = document.getElementById("cardContainer");
+  cardContainer.innerHTML = ""; // Efface les anciennes cartes
+
+  const cards = generateDobbleCards();
+  saveGeneratedCards(cards); // Sauvegarde les cartes générées
+
+  cards.forEach((card) => {
+    const cardDiv = document.createElement("div");
+    cardDiv.className = "card";
+    positionSymbols(cardDiv, card);
+    cardContainer.appendChild(cardDiv);
+  });
+}
+
+function loadGeneratedCards() {
+  const savedCards = localStorage.getItem("generatedCards");
+  if (savedCards) {
+    const cards = JSON.parse(savedCards); // Charge les cartes sauvegardées
+    const cardContainer = document.getElementById("cardContainer");
+    cardContainer.innerHTML = ""; // Efface les anciennes cartes
+
+    cards.forEach((card) => {
+      const cardDiv = document.createElement("div");
+      cardDiv.className = "card";
+      positionSymbols(cardDiv, card);
+      cardContainer.appendChild(cardDiv);
+    });
+  }
+}
+
+function updateCardEmojis() {
+  const savedCards = localStorage.getItem("generatedCards");
+  if (savedCards) {
+    const cards = JSON.parse(savedCards);
+    cards.forEach((card) => {
+      card.forEach((symbol, index) => {
+        if (emojiList.includes(symbol)) {
+          card[index] = emojiList[emojiList.indexOf(symbol)];
+        }
+      });
+    });
+    saveGeneratedCards(cards); // Sauvegarde les cartes mises à jour
+    loadGeneratedCards(); // Recharge les cartes avec les mises à jour
+  }
+}
+
+fileInput.addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      emojiList[index] = e.target.result; // Remplace l'émoji par l'image
+      saveEmojiList(); // Sauvegarde dans localStorage
+      updateCardEmojis(); // Met à jour les émojis des cartes
+    };
+    reader.readAsDataURL(file);
+  }
+});
