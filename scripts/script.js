@@ -1,4 +1,3 @@
-
 // Liste des émojis par défaut
 const defaultEmojis = [
   "🍓", "🍕", "🍔", "🌵", "🐱", "🐟", "🎸", "🎨", "📱", "🚗",
@@ -20,13 +19,36 @@ function saveEmojiList() {
   localStorage.setItem("emojiList", JSON.stringify(emojiList));
 }
 
-// Initialisation de la liste d'émojis (personnalisée ou par défaut)
+// Fonction pour sauvegarder les cartes générées dans `localStorage`
+function saveGeneratedCards(cards) {
+  localStorage.setItem("generatedCards", JSON.stringify(cards));
+}
+
+// Fonction pour charger les cartes générées depuis `localStorage`
+function loadGeneratedCards() {
+  const savedCards = localStorage.getItem("generatedCards");
+  if (savedCards) {
+    const cards = JSON.parse(savedCards);
+    const cardContainer = document.getElementById("cardContainer");
+    cardContainer.innerHTML = ""; // Efface les anciennes cartes
+
+    cards.forEach((card) => {
+      const cardDiv = document.createElement("div");
+      cardDiv.className = "card";
+      positionSymbols(cardDiv, card);
+      cardContainer.appendChild(cardDiv);
+    });
+  }
+}
+
+// Initialisation de la liste d'émojis
 let emojiList = loadEmojiList();
+let activeSymbol = null; // Émoji actuellement sélectionné pour modification
 
 // Fonction pour générer les cartes Dobble
 function generateDobbleCards() {
   const n = 7; // Nombre de symboles par carte - 1
-  const totalSymbols = n * n + n + 1;
+  const totalSymbols = n * n + n + 1; // Nombre total de symboles nécessaires
   const symbols = emojiList.slice(0, totalSymbols);
   const cards = [];
 
@@ -49,21 +71,14 @@ function generateDobbleCards() {
     }
   }
 
-  return cards.slice(0, 55);
+  return cards.slice(0, 55); // Limite à 55 cartes
 }
 
 // Fonction pour afficher les cartes dans la grille
 function generateCards() {
-  const cardContainer = document.getElementById("cardContainer");
-  cardContainer.innerHTML = "";
-
   const cards = generateDobbleCards();
-  cards.forEach((card) => {
-    const cardDiv = document.createElement("div");
-    cardDiv.className = "card";
-    positionSymbols(cardDiv, card);
-    cardContainer.appendChild(cardDiv);
-  });
+  saveGeneratedCards(cards); // Sauvegarde les cartes générées
+  loadGeneratedCards(); // Recharge les cartes
 }
 
 // Fonction pour positionner les symboles sur une carte
@@ -71,7 +86,6 @@ function positionSymbols(cardDiv, card) {
   const cardSize = 250;
   const margin = 20;
 
-  // Récupère les valeurs des curseurs pour les tailles minimale et maximale
   const minSize = parseInt(document.getElementById("minSize").value, 10) || 30;
   const maxSize = parseInt(document.getElementById("maxSize").value, 10) || 70;
 
@@ -82,11 +96,10 @@ function positionSymbols(cardDiv, card) {
     let x, y, size;
 
     while (!isValidPosition) {
-      size = Math.random() * (maxSize - minSize) + minSize; // Taille aléatoire
+      size = Math.random() * (maxSize - minSize) + minSize;
       x = margin + Math.random() * (cardSize - 2 * margin - size);
       y = margin + Math.random() * (cardSize - 2 * margin - size);
 
-      // Vérifie que les émojis ne se chevauchent pas
       isValidPosition = positions.every(pos => {
         const distance = Math.sqrt(Math.pow(pos.x - x, 2) + Math.pow(pos.y - y, 2));
         return distance > (pos.size + size) / 2 + 10;
@@ -95,7 +108,7 @@ function positionSymbols(cardDiv, card) {
 
     positions.push({ x, y, size });
 
-    const rotation = Math.random() * 360; // Rotation aléatoire entre 0 et 360 degrés
+    const rotation = Math.random() * 360; // Rotation aléatoire
     const symbolDiv = document.createElement("div");
     symbolDiv.className = "symbol";
 
@@ -110,47 +123,38 @@ function positionSymbols(cardDiv, card) {
       symbolDiv.style.fontSize = `${size}px`;
     }
 
-    // Applique les styles, y compris la rotation
     Object.assign(symbolDiv.style, {
       left: `${x}px`,
       top: `${y}px`,
       width: `${size}px`,
       height: `${size}px`,
-      transform: `rotate(${rotation}deg)`, // Applique la rotation
-      transformOrigin: "center", // Centre la rotation
+      transform: `rotate(${rotation}deg)`,
+      cursor: "move"
     });
 
-    enableDrag(symbolDiv); // Active le déplacement pour chaque émoji
+    enableDrag(symbolDiv); // Active le déplacement
     cardDiv.appendChild(symbolDiv);
   });
 }
 
 // Fonction pour activer le déplacement des émojis
 function enableDrag(symbol) {
-  let isDragging = false; // Indique si le symbole est en cours de déplacement
+  let isDragging = false;
   let offsetX, offsetY;
 
-  // Empêche le comportement par défaut de drag & drop
-  symbol.addEventListener("dragstart", (event) => {
-    event.preventDefault();
-  });
-
-  // Début du déplacement
   symbol.addEventListener("mousedown", (event) => {
     isDragging = true;
     offsetX = event.clientX - symbol.offsetLeft;
     offsetY = event.clientY - symbol.offsetTop;
-    symbol.style.cursor = "grabbing"; // Change le curseur pendant le déplacement
+    symbol.style.cursor = "grabbing";
   });
 
-  // Déplacement de l'émoji
   document.addEventListener("mousemove", (event) => {
     if (isDragging) {
       const parentRect = symbol.parentElement.getBoundingClientRect();
       let newLeft = event.clientX - offsetX;
       let newTop = event.clientY - offsetY;
 
-      // Empêche le symbole de sortir de la carte
       if (newLeft < 0) newLeft = 0;
       if (newTop < 0) newTop = 0;
       if (newLeft + symbol.offsetWidth > parentRect.width) {
@@ -165,63 +169,54 @@ function enableDrag(symbol) {
     }
   });
 
-  // Fin du déplacement
   document.addEventListener("mouseup", () => {
     if (isDragging) {
       isDragging = false;
-      symbol.style.cursor = "move"; // Retourne au curseur par défaut
+      symbol.style.cursor = "move";
     }
   });
 }
 
 // Fonction pour télécharger les cartes en PDF
 async function downloadCardsAsPDF() {
-  try {
-    const cardContainer = document.getElementById("cardContainer");
-    const cards = cardContainer.querySelectorAll(".card");
+  const cardContainer = document.getElementById("cardContainer");
+  const cards = cardContainer.querySelectorAll(".card");
 
-    if (cards.length === 0) {
-      alert("Aucune carte à télécharger. Veuillez d'abord générer les cartes.");
-      return;
-    }
-
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF("portrait", "mm", "a4");
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const cardWidth = 70; // Taille d'une carte sur le PDF
-    const cardHeight = 70; // Taille d'une carte sur le PDF
-    const margin = 10;
-    const cardsPerRow = Math.floor((pageWidth - margin) / (cardWidth + margin));
-    const cardsPerCol = Math.floor((pageHeight - margin) / (cardHeight + margin));
-    const cardsPerPage = cardsPerRow * cardsPerCol;
-
-    let currentCardIndex = 0;
-
-    for (let i = 0; i < cards.length; i++) {
-      const canvas = await html2canvas(cards[i], { scale: 2 });
-      const imgData = canvas.toDataURL("image/png");
-
-      const row = Math.floor(currentCardIndex / cardsPerRow) % cardsPerCol;
-      const col = currentCardIndex % cardsPerRow;
-      const x = margin + col * (cardWidth + margin);
-      const y = margin + row * (cardHeight + margin);
-
-      pdf.addImage(imgData, "PNG", x, y, cardWidth, cardHeight);
-      currentCardIndex++;
-
-      if (currentCardIndex % cardsPerPage === 0 && currentCardIndex < cards.length) {
-        pdf.addPage();
-      }
-    }
-
-    pdf.save("dobble_cards.pdf");
-    alert("Le PDF a été téléchargé avec succès !");
-  } catch (error) {
-    console.error("Erreur lors du téléchargement du PDF :", error);
-    alert("Une erreur est survenue lors du téléchargement du PDF. Veuillez réessayer.");
+  if (cards.length === 0) {
+    alert("Aucune carte à télécharger.");
+    return;
   }
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF("portrait", "mm", "a4");
+  const cardWidth = 70;
+  const cardHeight = 70;
+
+  let currentCardIndex = 0;
+
+  for (let i = 0; i < cards.length; i++) {
+    const canvas = await html2canvas(cards[i], { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+
+    const x = 10 + (currentCardIndex % 3) * 80;
+    const y = 10 + Math.floor(currentCardIndex / 3) * 80;
+
+    pdf.addImage(imgData, "PNG", x, y, cardWidth, cardHeight);
+
+    if ((i + 1) % 6 === 0 && i !== cards.length - 1) {
+      pdf.addPage();
+    }
+    currentCardIndex++;
+  }
+
+  pdf.save("cartes_dobble.pdf");
 }
+
+// Initialisation
+document.addEventListener("DOMContentLoaded", () => {
+  loadGeneratedCards();
+  populateEmojiTable();
+});
 
 // Fonction pour remplir le tableau des émojis personnalisables
 function populateEmojiTable() {
@@ -241,188 +236,19 @@ function populateEmojiTable() {
     } else {
       emojiCell.textContent = emoji;
     }
-    emojiCell.id = `current-emoji-${index}`;
     row.appendChild(emojiCell);
-
-    const inputCell = document.createElement("td");
-    const uploadButton = document.createElement("label");
-    uploadButton.className = "custom-file-upload";
-    uploadButton.textContent = "Choisir un fichier";
-
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
-    fileInput.dataset.index = index;
-
-    uploadButton.appendChild(fileInput);
-    inputCell.appendChild(uploadButton);
-
-    fileInput.addEventListener("change", (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          emojiList[index] = e.target.result;
-          saveEmojiList();
-          populateEmojiTable();
-          generateCards();
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    row.appendChild(inputCell);
 
     const actionCell = document.createElement("td");
     const resetButton = document.createElement("button");
     resetButton.textContent = "Réinitialiser";
-    resetButton.onclick = () => resetEmoji(index);
+    resetButton.onclick = () => {
+      emojiList[index] = defaultEmojis[index];
+      saveEmojiList();
+      generateCards();
+    };
     actionCell.appendChild(resetButton);
     row.appendChild(actionCell);
 
     tableBody.appendChild(row);
   });
 }
-
-// Fonction pour réinitialiser un émoji
-function resetEmoji(index) {
-  emojiList[index] = defaultEmojis[index];
-  saveEmojiList();
-  populateEmojiTable();
-  generateCards();
-}
-
-// Fonction pour mettre à jour l'affichage des curseurs
-// Mise à jour dynamique des curseurs et synchronisation avec les cartes
-function updateSizeValues() {
-  const minSizeInput = document.getElementById("minSize");
-  const maxSizeInput = document.getElementById("maxSize");
-  const minSizeValue = document.getElementById("minSizeValue");
-  const maxSizeValue = document.getElementById("maxSizeValue");
-
-  // Assure que la taille minimale ne dépasse pas 30 px
-  if (parseInt(minSizeInput.value) > 30) {
-    minSizeInput.value = 30;
-  }
-
-  // Synchronise les valeurs affichées
-  minSizeValue.textContent = `${minSizeInput.value} px`;
-  maxSizeValue.textContent = `${maxSizeInput.value} px`;
-
-  // Vérifie que la taille minimale n'est pas supérieure à la taille maximale
-  if (parseInt(minSizeInput.value) > parseInt(maxSizeInput.value)) {
-    maxSizeInput.value = minSizeInput.value;
-    maxSizeValue.textContent = `${maxSizeInput.value} px`;
-  }
-}
-
-// Mise à jour des cartes lorsque les curseurs changent
-let isUpdating = false; // Variable pour éviter des appels multiples
-
-function handleSizeChange() {
-  if (!isUpdating) {
-    isUpdating = true;
-    requestAnimationFrame(() => {
-      updateSizeValues(); // Met à jour les tailles affichées
-      generateCards(); // Regénère les cartes
-      isUpdating = false; // Permet une nouvelle mise à jour
-    });
-  }
-}
-
-// Relie les curseurs aux événements
-document.getElementById("minSize").addEventListener("input", handleSizeChange);
-document.getElementById("maxSize").addEventListener("input", handleSizeChange);
-
-
-async function exportCardsAsZip() {
-  const cardContainer = document.getElementById("cardContainer");
-  const cards = cardContainer.querySelectorAll(".card");
-
-  if (cards.length === 0) {
-    alert("Aucune carte à exporter. Veuillez d'abord générer les cartes.");
-    return;
-  }
-
-  const zip = new JSZip(); // Initialisation du fichier ZIP
-  const folder = zip.folder("Cartes_Dobble"); // Création d'un dossier dans le ZIP
-
-  for (let i = 0; i < cards.length; i++) {
-    const canvas = await html2canvas(cards[i], { scale: 2 }); // Capture la carte en tant que canvas
-    const imgData = canvas.toDataURL("image/png"); // Convertit en PNG
-
-    // Ajoute l'image au dossier ZIP
-    folder.file(`carte_dobble_${i + 1}.png`, imgData.split(",")[1], { base64: true });
-  }
-
-  // Génère le fichier ZIP
-  zip.generateAsync({ type: "blob" }).then(function (content) {
-    saveAs(content, "cartes_dobble.zip"); // Télécharge le fichier ZIP
-    alert("Les 55 cartes ont été téléchargées en tant que fichier ZIP !");
-  });
-}
-
-function saveGeneratedCards(cards) {
-  localStorage.setItem("generatedCards", JSON.stringify(cards));
-}
-
-function generateCards() {
-  const cardContainer = document.getElementById("cardContainer");
-  cardContainer.innerHTML = ""; // Efface les anciennes cartes
-
-  const cards = generateDobbleCards();
-  saveGeneratedCards(cards); // Sauvegarde les cartes générées
-
-  cards.forEach((card) => {
-    const cardDiv = document.createElement("div");
-    cardDiv.className = "card";
-    positionSymbols(cardDiv, card);
-    cardContainer.appendChild(cardDiv);
-  });
-}
-
-function loadGeneratedCards() {
-  const savedCards = localStorage.getItem("generatedCards");
-  if (savedCards) {
-    const cards = JSON.parse(savedCards); // Charge les cartes sauvegardées
-    const cardContainer = document.getElementById("cardContainer");
-    cardContainer.innerHTML = ""; // Efface les anciennes cartes
-
-    cards.forEach((card) => {
-      const cardDiv = document.createElement("div");
-      cardDiv.className = "card";
-      positionSymbols(cardDiv, card);
-      cardContainer.appendChild(cardDiv);
-    });
-  }
-}
-
-function updateCardEmojis() {
-  const savedCards = localStorage.getItem("generatedCards");
-  if (savedCards) {
-    const cards = JSON.parse(savedCards);
-    cards.forEach((card) => {
-      card.forEach((symbol, index) => {
-        if (emojiList.includes(symbol)) {
-          card[index] = emojiList[emojiList.indexOf(symbol)];
-        }
-      });
-    });
-    saveGeneratedCards(cards); // Sauvegarde les cartes mises à jour
-    loadGeneratedCards(); // Recharge les cartes avec les mises à jour
-  }
-}
-
-fileInput.addEventListener("change", (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      emojiList[index] = e.target.result; // Remplace l'émoji par l'image
-      saveEmojiList(); // Sauvegarde dans localStorage
-      updateCardEmojis(); // Met à jour les émojis des cartes
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
