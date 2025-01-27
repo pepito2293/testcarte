@@ -293,33 +293,39 @@ function resetEmoji(index) {
 }
 
 // Fonction pour mettre à jour l'affichage des curseurs
-function updatePreview() {
+// Mise à jour dynamique des curseurs et synchronisation avec les cartes
+function updateSizeValues() {
   const minSizeInput = document.getElementById("minSize");
   const maxSizeInput = document.getElementById("maxSize");
-  document.getElementById("minSizeValue").textContent = `${minSizeInput.value}px`;
-  document.getElementById("maxSizeValue").textContent = `${maxSizeInput.value}px`;
+  const minSizeValue = document.getElementById("minSizeValue");
+  const maxSizeValue = document.getElementById("maxSizeValue");
 
-  if (parseInt(minSizeInput.value, 10) > parseInt(maxSizeInput.value, 10)) {
+  // Assure que la taille minimale ne dépasse pas 35 px
+  if (parseInt(minSizeInput.value) > 35) {
+    minSizeInput.value = 35;
+  }
+
+  // Synchronise les valeurs affichées
+  minSizeValue.textContent = `${minSizeInput.value} px`;
+  maxSizeValue.textContent = `${maxSizeInput.value} px`;
+
+  // Vérifie que la taille minimale n'est pas supérieure à la taille maximale
+  if (parseInt(minSizeInput.value) > parseInt(maxSizeInput.value)) {
     maxSizeInput.value = minSizeInput.value;
-    document.getElementById("maxSizeValue").textContent = `${maxSizeInput.value}px`;
+    maxSizeValue.textContent = `${maxSizeInput.value} px`;
   }
 }
 
-// Initialisation
-document.addEventListener("DOMContentLoaded", () => {
-  populateEmojiTable();
-  generateCards();
+// Mise à jour des cartes lorsque les curseurs changent
+function handleSizeChange() {
+  updateSizeValues(); // Met à jour les affichages
+  generateCards(); // Regénère les cartes avec les nouvelles tailles
+}
 
-  document.getElementById("minSize").addEventListener("input", () => {
-    updatePreview();
-    generateCards();
-  });
+// Relie les événements des curseurs aux fonctions
+document.getElementById("minSize").addEventListener("input", handleSizeChange);
+document.getElementById("maxSize").addEventListener("input", handleSizeChange);
 
-  document.getElementById("maxSize").addEventListener("input", () => {
-    updatePreview();
-    generateCards();
-  });
-});
 
 async function exportCardsAsZip() {
   const cardContainer = document.getElementById("cardContainer");
