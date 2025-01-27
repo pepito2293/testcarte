@@ -269,6 +269,8 @@ function resetEmoji(index) {
 }
 
 // Fonction pour mettre à jour l'aperçu des tailles minimale et maximale
+
+// Mise à jour dynamique des curseurs
 function updatePreview() {
   const minSizeInput = document.getElementById("minSize");
   const maxSizeInput = document.getElementById("maxSize");
@@ -278,13 +280,35 @@ function updatePreview() {
   // Met à jour les valeurs affichées
   minSizeValue.textContent = `${minSizeInput.value}px`;
   maxSizeValue.textContent = `${maxSizeInput.value}px`;
-  document.getElementById("minSize").addEventListener("input", updatePreview);
-document.getElementById("maxSize").addEventListener("input", updatePreview);
 
-
-  // Vérifie que la taille minimale est inférieure ou égale à la taille maximale
+  // Vérifie les contraintes
   if (parseInt(minSizeInput.value) > parseInt(maxSizeInput.value)) {
-    maxSizeInput.value = minSizeInput.value; // Ajuste la taille maximale
+    maxSizeInput.value = minSizeInput.value;
     maxSizeValue.textContent = `${maxSizeInput.value}px`;
   }
 }
+
+// Génération des cartes
+function generateCards() {
+  const cardContainer = document.getElementById("cardContainer");
+  cardContainer.innerHTML = ""; // Réinitialise les cartes
+
+  const cards = generateDobbleCards();
+  cards.forEach((card) => {
+    const cardDiv = document.createElement("div");
+    cardDiv.className = "card";
+    positionSymbols(cardDiv, card);
+    cardContainer.appendChild(cardDiv);
+  });
+}
+
+// Relie les événements des curseurs
+document.getElementById("minSize").addEventListener("input", () => {
+  updatePreview();
+  generateCards();
+});
+
+document.getElementById("maxSize").addEventListener("input", () => {
+  updatePreview();
+  generateCards();
+});
