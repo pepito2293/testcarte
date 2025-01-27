@@ -123,31 +123,54 @@ function positionSymbols(cardDiv, card) {
   });
 }
 
-// Fonction pour activer le déplacement et le redimensionnement des symboles
-function enableDragAndResize(symbol) {
-  let isDragging = false; // Indique si le symbole est en cours de déplacement
+let activeSymbol = null; // Variable pour l'émoji actuellement sélectionné
+
+// Fonction pour sélectionner un émoji
+function selectSymbol(symbol) {
+  // Supprime la sélection précédente
+  if (activeSymbol) {
+    activeSymbol.style.outline = "none";
+  }
+
+  // Sélectionne le nouvel émoji
+  activeSymbol = symbol;
+  activeSymbol.style.outline = "2px solid #ffd700"; // Ajoute une bordure pour indiquer la sélection
+
+  // Affiche le contrôle de taille
+  const sizeControl = document.getElementById("sizeControl");
+  const sizeInput = document.getElementById("emojiSize");
+  const sizeValue = document.getElementById("emojiSizeValue");
+
+  sizeControl.style.display = "flex"; // Affiche la section de contrôle
+  sizeInput.value = parseInt(activeSymbol.style.width, 10); // Initialise avec la taille actuelle
+  sizeValue.textContent = `${sizeInput.value} px`; // Met à jour le texte du label
+}
+
+// Fonction pour ajuster la taille de l'émoji sélectionné
+function adjustEmojiSize() {
+  if (activeSymbol) {
+    const sizeInput = document.getElementById("emojiSize");
+    const sizeValue = document.getElementById("emojiSizeValue");
+
+    const newSize = sizeInput.value; // Récupère la nouvelle taille
+    activeSymbol.style.width = `${newSize}px`; // Applique la nouvelle largeur
+    activeSymbol.style.height = `${newSize}px`; // Applique la nouvelle hauteur
+
+    sizeValue.textContent = `${newSize}px`; // Met à jour l'affichage
+  }
+}
+
+// Fonction pour permettre le déplacement des émojis
+function enableDrag(symbol) {
+  let isDragging = false; // Indique si l'émoji est en cours de déplacement
   let offsetX, offsetY;
-
-  // Empêche le comportement par défaut de drag & drop
-  symbol.addEventListener("dragstart", (event) => {
-    event.preventDefault();
-  });
-
-  // Affiche le curseur pour changer la taille
-  symbol.addEventListener("click", (event) => {
-    event.stopPropagation(); // Empêche d'autres comportements au clic
-    showSizeSlider(symbol); // Affiche le curseur pour ajuster la taille
-  });
 
   // Début du déplacement
   symbol.addEventListener("mousedown", (event) => {
-    if (!event.target.classList.contains("size-slider")) {
-      // Si ce n'est pas un curseur, commence le déplacement
-      isDragging = true;
-      offsetX = event.clientX - symbol.offsetLeft;
-      offsetY = event.clientY - symbol.offsetTop;
-      symbol.style.cursor = "grabbing"; // Change le curseur pendant le déplacement
-    }
+    isDragging = true;
+    offsetX = event.clientX - symbol.offsetLeft;
+    offsetY = event.clientY - symbol.offsetTop;
+    symbol.style.cursor = "grabbing"; // Change le curseur
   });
 
   // Déplacement de l'émoji
@@ -157,7 +180,7 @@ function enableDragAndResize(symbol) {
       let newLeft = event.clientX - offsetX;
       let newTop = event.clientY - offsetY;
 
-      // Empêche le symbole de sortir de la carte
+      // Empêche l'émoji de sortir de la carte
       if (newLeft < 0) newLeft = 0;
       if (newTop < 0) newTop = 0;
       if (newLeft + symbol.offsetWidth > parentRect.width) {
@@ -167,8 +190,8 @@ function enableDragAndResize(symbol) {
         newTop = parentRect.height - symbol.offsetHeight;
       }
 
-      symbol.style.left = `${newLeft}px`;
-      symbol.style.top = `${newTop}px`;
+      symbol.style.left = `${newLeft}px`; // Applique la nouvelle position X
+      symbol.style.top = `${newTop}px`; // Applique la nouvelle position Y
     }
   });
 
@@ -176,88 +199,11 @@ function enableDragAndResize(symbol) {
   document.addEventListener("mouseup", () => {
     if (isDragging) {
       isDragging = false;
-      symbol.style.cursor = "move"; // Retourne au curseur par défaut
+      symbol.style.cursor = "move"; // Retour au curseur par défaut
     }
   });
 }
 
-// Fonction pour afficher un curseur permettant d'ajuster la taille de l'émoji
-function showSizeSlider(symbol) {
-  // Vérifie s'il existe déjà un curseur actif et le supprime
-  const existingSlider = document.getElementById("size-slider");
-  if (existingSlider) {
-    existingSlider.remove();
-  }
-
-  // Création du conteneur du slider
-  const sliderContainer = document.createElement("div");
-  sliderContainer.id = "size-slider";
-  sliderContainer.className = "size-slider";
-  sliderContainer.style.position = "absolute";
-  sliderContainer.style.top = `${symbol.getBoundingClientRect().top - 50}px`;
-  sliderContainer.style.left = `${symbol.getBoundingClientRect().left}px`;
-  sliderContainer.style.backgroundColor = "#ffffff";
-  sliderContainer.style.padding = "10px";
-  sliderContainer.style.borderRadius = "5px";
-  sliderContainer.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
-  sliderContainer.style.zIndex = "1000";
-
-  // Création du curseur
-  const sizeSlider = document.createElement("input");
-  sizeSlider.type = "range";
-  sizeSlider.min = "20";
-  sizeSlider.max = "150";
-  sizeSlider.value = parseInt(symbol.style.width, 10) || 50; // Taille actuelle de l'émoji
-  sizeSlider.style.width = "150px";
-  sizeSlider.className = "size-slider";
-
-  // Création du label pour afficher la taille
-  const sizeLabel = document.createElement("span");
-  sizeLabel.textContent = `${sizeSlider.value}px`;
-  sizeLabel.style.marginLeft = "10px";
-  sizeLabel.className = "size-slider";
-
-  // Met à jour la taille de l'émoji lorsque le slider est utilisé
-  sizeSlider.addEventListener("input", (event) => {
-    event.stopPropagation(); // Empêche le curseur de provoquer d'autres événements
-    const newSize = sizeSlider.value;
-    symbol.style.width = `${newSize}px`;
-    symbol.style.height = `${newSize}px`;
-    sizeLabel.textContent = `${newSize}px`; // Met à jour le label
-  });
-
-  // Ajoute un bouton pour fermer le curseur
-  const closeButton = document.createElement("button");
-  closeButton.textContent = "×";
-  closeButton.style.marginLeft = "10px";
-  closeButton.style.border = "none";
-  closeButton.style.background = "transparent";
-  closeButton.style.fontSize = "16px";
-  closeButton.style.cursor = "pointer";
-  closeButton.className = "size-slider";
-  closeButton.addEventListener("click", (event) => {
-    event.stopPropagation(); // Empêche les conflits
-    sliderContainer.remove(); // Supprime le slider
-  });
-
-  // Ajoute le curseur et le label au conteneur
-  sliderContainer.appendChild(sizeSlider);
-  sliderContainer.appendChild(sizeLabel);
-  sliderContainer.appendChild(closeButton);
-
-  // Ajoute le conteneur au document
-  document.body.appendChild(sliderContainer);
-}
-
-
-// Fonction pour réinitialiser un émoji
-function resetEmoji(index) {
-  emojiList[index] = defaultEmojis[index]; // Réinitialise à la valeur par défaut
-  saveEmojiList(); // Sauvegarde dans localStorage
-  populateEmojiTable();
-  generateCards();
-  alert(`L'émoji #${index + 1} a été réinitialisé !`);
-}
 
 // Initialisation au chargement de la page
 document.addEventListener("DOMContentLoaded", () => {
