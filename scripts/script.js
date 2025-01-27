@@ -320,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-async function exportCardsAsPNG() {
+async function exportCardsAsZip() {
   const cardContainer = document.getElementById("cardContainer");
   const cards = cardContainer.querySelectorAll(".card");
 
@@ -329,19 +329,20 @@ async function exportCardsAsPNG() {
     return;
   }
 
+  const zip = new JSZip(); // Initialisation du fichier ZIP
+  const folder = zip.folder("Cartes_Dobble"); // Création d'un dossier dans le ZIP
+
   for (let i = 0; i < cards.length; i++) {
-    const canvas = await html2canvas(cards[i], { scale: 2 }); // Génère une image haute résolution
+    const canvas = await html2canvas(cards[i], { scale: 2 }); // Capture la carte en tant que canvas
     const imgData = canvas.toDataURL("image/png"); // Convertit en PNG
 
-    // Crée un lien pour télécharger l'image
-    const link = document.createElement("a");
-    link.href = imgData;
-    link.download = `carte_dobble_${i + 1}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Ajoute l'image au dossier ZIP
+    folder.file(`carte_dobble_${i + 1}.png`, imgData.split(",")[1], { base64: true });
   }
 
-  alert("Les cartes ont été exportées en PNG avec succès !");
+  // Génère le fichier ZIP
+  zip.generateAsync({ type: "blob" }).then(function (content) {
+    saveAs(content, "cartes_dobble.zip"); // Télécharge le fichier ZIP
+    alert("Les 55 cartes ont été téléchargées en tant que fichier ZIP !");
+  });
 }
-
