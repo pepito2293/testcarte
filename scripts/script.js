@@ -175,23 +175,51 @@ function enableDrag(symbol) {
 
 // Fonction pour télécharger les cartes en PDF
 async function downloadCardsAsPDF() {
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF("portrait", "mm", "a4");
-  const cardContainer = document.getElementById("cardContainer");
+  try {
+    const cardContainer = document.getElementById("cardContainer");
+    const cards = cardContainer.querySelectorAll(".card");
 
-  if (!cardContainer.children.length) {
-    alert("Aucune carte disponible à télécharger.");
-    return;
+    if (cards.length === 0) {
+      alert("Aucune carte à télécharger. Veuillez d'abord générer les cartes.");
+      return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("portrait", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const cardWidth = 70; // Taille d'une carte sur le PDF
+    const cardHeight = 70; // Taille d'une carte sur le PDF
+    const margin = 10;
+    const cardsPerRow = Math.floor((pageWidth - margin) / (cardWidth + margin));
+    const cardsPerCol = Math.floor((pageHeight - margin) / (cardHeight + margin));
+    const cardsPerPage = cardsPerRow * cardsPerCol;
+
+    let currentCardIndex = 0;
+
+    for (let i = 0; i < cards.length; i++) {
+      const canvas = await html2canvas(cards[i], { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+
+      const row = Math.floor(currentCardIndex / cardsPerRow) % cardsPerCol;
+      const col = currentCardIndex % cardsPerRow;
+      const x = margin + col * (cardWidth + margin);
+      const y = margin + row * (cardHeight + margin);
+
+      pdf.addImage(imgData, "PNG", x, y, cardWidth, cardHeight);
+      currentCardIndex++;
+
+      if (currentCardIndex % cardsPerPage === 0 && currentCardIndex < cards.length) {
+        pdf.addPage();
+      }
+    }
+
+    pdf.save("dobble_cards.pdf");
+    alert("Le PDF a été téléchargé avec succès !");
+  } catch (error) {
+    console.error("Erreur lors du téléchargement du PDF :", error);
+    alert("Une erreur est survenue lors du téléchargement du PDF. Veuillez réessayer.");
   }
-
-  for (const card of cardContainer.children) {
-    const canvas = await html2canvas(card);
-    const imgData = canvas.toDataURL("image/png");
-    pdf.addImage(imgData, "PNG", 10, 10, 190, 190);
-    pdf.addPage();
-  }
-
-  pdf.save("Cartes_Dobble.pdf");
 }
 
 // Fonction pour remplir le tableau des émojis personnalisables
