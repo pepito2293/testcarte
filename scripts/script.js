@@ -111,8 +111,79 @@ function positionSymbols(cardDiv, card) {
       height: `${size}px`
     });
 
+    enableDrag(symbolDiv); // Active le déplacement
     cardDiv.appendChild(symbolDiv);
   });
+}
+
+// Fonction pour activer le déplacement des émojis
+function enableDrag(symbol) {
+  let isDragging = false; // Indique si le symbole est en cours de déplacement
+  let offsetX, offsetY;
+
+  // Empêche le comportement par défaut de drag & drop
+  symbol.addEventListener("dragstart", (event) => {
+    event.preventDefault();
+  });
+
+  // Début du déplacement
+  symbol.addEventListener("mousedown", (event) => {
+    isDragging = true;
+    offsetX = event.clientX - symbol.offsetLeft;
+    offsetY = event.clientY - symbol.offsetTop;
+    symbol.style.cursor = "grabbing"; // Change le curseur pendant le déplacement
+  });
+
+  // Déplacement de l'émoji
+  document.addEventListener("mousemove", (event) => {
+    if (isDragging) {
+      const parentRect = symbol.parentElement.getBoundingClientRect();
+      let newLeft = event.clientX - offsetX;
+      let newTop = event.clientY - offsetY;
+
+      // Empêche le symbole de sortir de la carte
+      if (newLeft < 0) newLeft = 0;
+      if (newTop < 0) newTop = 0;
+      if (newLeft + symbol.offsetWidth > parentRect.width) {
+        newLeft = parentRect.width - symbol.offsetWidth;
+      }
+      if (newTop + symbol.offsetHeight > parentRect.height) {
+        newTop = parentRect.height - symbol.offsetHeight;
+      }
+
+      symbol.style.left = `${newLeft}px`;
+      symbol.style.top = `${newTop}px`;
+    }
+  });
+
+  // Fin du déplacement
+  document.addEventListener("mouseup", () => {
+    if (isDragging) {
+      isDragging = false;
+      symbol.style.cursor = "move"; // Retourne au curseur par défaut
+    }
+  });
+}
+
+// Fonction pour télécharger les cartes en PDF
+async function downloadCardsAsPDF() {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF("portrait", "mm", "a4");
+  const cardContainer = document.getElementById("cardContainer");
+
+  if (!cardContainer.children.length) {
+    alert("Aucune carte disponible à télécharger.");
+    return;
+  }
+
+  for (const card of cardContainer.children) {
+    const canvas = await html2canvas(card);
+    const imgData = canvas.toDataURL("image/png");
+    pdf.addImage(imgData, "PNG", 10, 10, 190, 190);
+    pdf.addPage();
+  }
+
+  pdf.save("Cartes_Dobble.pdf");
 }
 
 // Fonction pour remplir le tableau des émojis personnalisables
@@ -182,27 +253,6 @@ function resetEmoji(index) {
   saveEmojiList();
   populateEmojiTable();
   generateCards();
-}
-
-// Fonction pour télécharger les cartes en PDF
-async function downloadCardsAsPDF() {
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF("portrait", "mm", "a4");
-  const cardContainer = document.getElementById("cardContainer");
-
-  if (!cardContainer.children.length) {
-    alert("Aucune carte disponible à télécharger.");
-    return;
-  }
-
-  for (const card of cardContainer.children) {
-    const canvas = await html2canvas(card);
-    const imgData = canvas.toDataURL("image/png");
-    pdf.addImage(imgData, "PNG", 10, 10, 190, 190);
-    pdf.addPage();
-  }
-
-  pdf.save("Cartes_Dobble.pdf");
 }
 
 // Fonction pour mettre à jour l'affichage des curseurs
