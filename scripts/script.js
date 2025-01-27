@@ -317,12 +317,20 @@ function updateSizeValues() {
 }
 
 // Mise à jour des cartes lorsque les curseurs changent
+let isUpdating = false; // Variable pour éviter des appels multiples
+
 function handleSizeChange() {
-  updateSizeValues(); // Met à jour les affichages
-  generateCards(); // Regénère les cartes avec les nouvelles tailles
+  if (!isUpdating) {
+    isUpdating = true;
+    requestAnimationFrame(() => {
+      updateSizeValues(); // Met à jour les tailles affichées
+      generateCards(); // Regénère les cartes
+      isUpdating = false; // Permet une nouvelle mise à jour
+    });
+  }
 }
 
-// Relie les événements des curseurs aux fonctions
+// Relie les curseurs aux événements
 document.getElementById("minSize").addEventListener("input", handleSizeChange);
 document.getElementById("maxSize").addEventListener("input", handleSizeChange);
 
