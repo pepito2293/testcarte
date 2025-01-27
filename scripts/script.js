@@ -133,6 +133,11 @@ function enableDragAndResize(symbol) {
     event.preventDefault();
   });
 
+  // Affiche le curseur pour changer la taille
+  symbol.addEventListener("click", () => {
+    showSizeSlider(symbol);
+  });
+
   // Début du déplacement
   symbol.addEventListener("mousedown", (event) => {
     isDragging = true;
@@ -170,19 +175,70 @@ function enableDragAndResize(symbol) {
       symbol.style.cursor = "move"; // Retourne au curseur par défaut
     }
   });
-
-  // Permet le redimensionnement via la molette de la souris
-  symbol.addEventListener("wheel", (event) => {
-    event.preventDefault();
-    const currentSize = parseInt(symbol.style.width, 10);
-    const newSize = event.deltaY < 0 ? currentSize + 5 : currentSize - 5;
-
-    if (newSize >= 20 && newSize <= 100) {
-      symbol.style.width = `${newSize}px`;
-      symbol.style.height = `${newSize}px`;
-    }
-  });
 }
+
+// Fonction pour afficher un curseur permettant d'ajuster la taille de l'émoji
+function showSizeSlider(symbol) {
+  // Vérifie s'il existe déjà un curseur actif et le supprime
+  const existingSlider = document.getElementById("size-slider");
+  if (existingSlider) {
+    existingSlider.remove();
+  }
+
+  // Création du conteneur du slider
+  const sliderContainer = document.createElement("div");
+  sliderContainer.id = "size-slider";
+  sliderContainer.style.position = "absolute";
+  sliderContainer.style.top = `${symbol.getBoundingClientRect().top - 40}px`;
+  sliderContainer.style.left = `${symbol.getBoundingClientRect().left}px`;
+  sliderContainer.style.backgroundColor = "#ffffff";
+  sliderContainer.style.padding = "10px";
+  sliderContainer.style.borderRadius = "5px";
+  sliderContainer.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
+  sliderContainer.style.zIndex = "1000";
+
+  // Création du curseur
+  const sizeSlider = document.createElement("input");
+  sizeSlider.type = "range";
+  sizeSlider.min = "20";
+  sizeSlider.max = "100";
+  sizeSlider.value = parseInt(symbol.style.width, 10) || 50; // Taille actuelle de l'émoji
+  sizeSlider.style.width = "150px";
+
+  // Création du label pour afficher la taille
+  const sizeLabel = document.createElement("span");
+  sizeLabel.textContent = `${sizeSlider.value}px`;
+  sizeLabel.style.marginLeft = "10px";
+
+  // Met à jour la taille de l'émoji lorsque le slider est utilisé
+  sizeSlider.addEventListener("input", () => {
+    const newSize = sizeSlider.value;
+    symbol.style.width = `${newSize}px`;
+    symbol.style.height = `${newSize}px`;
+    sizeLabel.textContent = `${newSize}px`; // Met à jour le label
+  });
+
+  // Ajoute un bouton pour fermer le curseur
+  const closeButton = document.createElement("button");
+  closeButton.textContent = "×";
+  closeButton.style.marginLeft = "10px";
+  closeButton.style.border = "none";
+  closeButton.style.background = "transparent";
+  closeButton.style.fontSize = "16px";
+  closeButton.style.cursor = "pointer";
+  closeButton.addEventListener("click", () => {
+    sliderContainer.remove(); // Supprime le slider
+  });
+
+  // Ajoute le curseur et le label au conteneur
+  sliderContainer.appendChild(sizeSlider);
+  sliderContainer.appendChild(sizeLabel);
+  sliderContainer.appendChild(closeButton);
+
+  // Ajoute le conteneur au document
+  document.body.appendChild(sliderContainer);
+}
+
 
 
 
