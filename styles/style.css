@@ -13,8 +13,8 @@ body {
 /* Style du logo */
 .logo {
   position: absolute;
-  top: 20px; /* Distance depuis le haut */
-  left: 20px; /* Distance depuis la gauche */
+  top: 20px;
+  left: 20px;
   width: 100px;
   height: 100px;
 }
@@ -24,18 +24,18 @@ h1 {
   font-size: 2.5rem;
   font-weight: bold;
   color: #ffffff;
-  text-shadow: 2px 2px 0px #000000; /* Ombre pour le texte */
+  text-shadow: 2px 2px 0px #000000;
   margin-top: 20px;
   text-align: center;
 }
 
 /* Vague décorative sous le titre */
 .wave {
-  background-color: #ffd700; /* Couleur dorée */
+  background-color: #ffd700;
   height: 30px;
   width: 100%;
-  border-radius: 50% 50% 0 0; /* Forme arrondie */
-  transform: rotate(180deg); /* Inversion de la vague */
+  border-radius: 50% 50% 0 0;
+  transform: rotate(180deg);
   margin-bottom: 20px;
 }
 
@@ -50,15 +50,15 @@ h1 {
   font-weight: bold;
   border: none;
   border-radius: 5px;
-  background-color: #ffd700; /* Couleur dorée */
-  color: #000000; /* Texte noir */
+  background-color: #ffd700;
+  color: #000000;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Ombre */
-  transition: transform 0.2s, box-shadow 0.2s; /* Animation au survol */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .actions button:hover {
-  transform: scale(1.05); /* Agrandissement au survol */
+  transform: scale(1.05);
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
 }
 
@@ -71,7 +71,7 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px; /* Espacement entre le texte et la valeur */
+  gap: 10px;
   margin-bottom: 10px;
 }
 
@@ -134,8 +134,8 @@ input[type="range"] {
 
 .card-container {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* Grille avec 5 colonnes */
-  gap: 25px; /* Espacement entre les cartes */
+  grid-template-columns: repeat(5, 1fr);
+  gap: 25px;
   justify-content: center;
 }
 
@@ -144,8 +144,8 @@ input[type="range"] {
   width: 250px;
   height: 250px;
   border: 3px solid #000000;
-  background: linear-gradient(135deg, #ffffff, #f9f9f9); /* Dégradé blanc */
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Ombre */
+  background: linear-gradient(135deg, #ffffff, #f9f9f9);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
   position: relative;
 }
 
@@ -156,26 +156,25 @@ input[type="range"] {
   justify-content: center;
   align-items: center;
   text-align: center;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
-  user-select: none; /* Désactive la sélection */
+  user-select: none;
   transition: transform 0.1s ease;
+
+  /* Suppression de la bulle */
+  border: none;
+  background: none;
+  border-radius: 0;
 }
 
 .symbol img {
   max-width: 100%;
   max-height: 100%;
-  border-radius: 50%; /* Forme circulaire */
-}
-
-.symbol:active {
-  cursor: grabbing; /* Curseur "saisie" lors du clic */
+  display: block;
 }
 
 /* Contrôle de taille d'émoji */
 .size-control {
-  display: none; /* Caché par défaut */
+  display: none;
   position: fixed;
   bottom: 20px;
   left: 50%;
@@ -291,4 +290,3 @@ button {
 button:hover {
   background-color: #e6c200;
 }
-
