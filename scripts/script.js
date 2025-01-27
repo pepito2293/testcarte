@@ -250,7 +250,6 @@ function showSizeSlider(symbol) {
 }
 
 
-
 // Fonction pour réinitialiser un émoji
 function resetEmoji(index) {
   emojiList[index] = defaultEmojis[index]; // Réinitialise à la valeur par défaut
