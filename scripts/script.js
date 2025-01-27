@@ -123,54 +123,22 @@ function positionSymbols(cardDiv, card) {
   });
 }
 
-let activeSymbol = null; // Variable pour l'émoji actuellement sélectionné
-
-// Fonction pour sélectionner un émoji
-function selectSymbol(symbol) {
-  // Supprime la sélection précédente
-  if (activeSymbol) {
-    activeSymbol.style.outline = "none";
-  }
-
-  // Sélectionne le nouvel émoji
-  activeSymbol = symbol;
-  activeSymbol.style.outline = "2px solid #ffd700"; // Ajoute une bordure pour indiquer la sélection
-
-  // Affiche le contrôle de taille
-  const sizeControl = document.getElementById("sizeControl");
-  const sizeInput = document.getElementById("emojiSize");
-  const sizeValue = document.getElementById("emojiSizeValue");
-
-  sizeControl.style.display = "flex"; // Affiche la section de contrôle
-  sizeInput.value = parseInt(activeSymbol.style.width, 10); // Initialise avec la taille actuelle
-  sizeValue.textContent = `${sizeInput.value} px`; // Met à jour le texte du label
-}
-
-// Fonction pour ajuster la taille de l'émoji sélectionné
-function adjustEmojiSize() {
-  if (activeSymbol) {
-    const sizeInput = document.getElementById("emojiSize");
-    const sizeValue = document.getElementById("emojiSizeValue");
-
-    const newSize = sizeInput.value; // Récupère la nouvelle taille
-    activeSymbol.style.width = `${newSize}px`; // Applique la nouvelle largeur
-    activeSymbol.style.height = `${newSize}px`; // Applique la nouvelle hauteur
-
-    sizeValue.textContent = `${newSize}px`; // Met à jour l'affichage
-  }
-}
-
-// Fonction pour permettre le déplacement des émojis
-function enableDrag(symbol) {
-  let isDragging = false; // Indique si l'émoji est en cours de déplacement
+// Fonction pour activer le déplacement et le redimensionnement des symboles
+function enableDragAndResize(symbol) {
+  let isDragging = false; // Indique si le symbole est en cours de déplacement
   let offsetX, offsetY;
+
+  // Empêche le comportement par défaut de drag & drop
+  symbol.addEventListener("dragstart", (event) => {
+    event.preventDefault();
+  });
 
   // Début du déplacement
   symbol.addEventListener("mousedown", (event) => {
     isDragging = true;
     offsetX = event.clientX - symbol.offsetLeft;
     offsetY = event.clientY - symbol.offsetTop;
-    symbol.style.cursor = "grabbing"; // Change le curseur
+    symbol.style.cursor = "grabbing"; // Change le curseur pendant le déplacement
   });
 
   // Déplacement de l'émoji
@@ -180,7 +148,7 @@ function enableDrag(symbol) {
       let newLeft = event.clientX - offsetX;
       let newTop = event.clientY - offsetY;
 
-      // Empêche l'émoji de sortir de la carte
+      // Empêche le symbole de sortir de la carte
       if (newLeft < 0) newLeft = 0;
       if (newTop < 0) newTop = 0;
       if (newLeft + symbol.offsetWidth > parentRect.width) {
@@ -190,8 +158,8 @@ function enableDrag(symbol) {
         newTop = parentRect.height - symbol.offsetHeight;
       }
 
-      symbol.style.left = `${newLeft}px`; // Applique la nouvelle position X
-      symbol.style.top = `${newTop}px`; // Applique la nouvelle position Y
+      symbol.style.left = `${newLeft}px`;
+      symbol.style.top = `${newTop}px`;
     }
   });
 
@@ -199,11 +167,34 @@ function enableDrag(symbol) {
   document.addEventListener("mouseup", () => {
     if (isDragging) {
       isDragging = false;
-      symbol.style.cursor = "move"; // Retour au curseur par défaut
+      symbol.style.cursor = "move"; // Retourne au curseur par défaut
+    }
+  });
+
+  // Permet le redimensionnement via la molette de la souris
+  symbol.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    const currentSize = parseInt(symbol.style.width, 10);
+    const newSize = event.deltaY < 0 ? currentSize + 5 : currentSize - 5;
+
+    if (newSize >= 20 && newSize <= 100) {
+      symbol.style.width = `${newSize}px`;
+      symbol.style.height = `${newSize}px`;
     }
   });
 }
 
+
+
+
+// Fonction pour réinitialiser un émoji
+function resetEmoji(index) {
+  emojiList[index] = defaultEmojis[index]; // Réinitialise à la valeur par défaut
+  saveEmojiList(); // Sauvegarde dans localStorage
+  populateEmojiTable();
+  generateCards();
+  alert(`L'émoji #${index + 1} a été réinitialisé !`);
+}
 
 // Initialisation au chargement de la page
 document.addEventListener("DOMContentLoaded", () => {
